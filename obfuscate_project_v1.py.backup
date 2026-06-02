@@ -1,0 +1,384 @@
+#!/usr/bin/env python3
+"""
+PlatformIO Project Obfuscator (Enhanced)
+=========================================
+Dieses Tool erstellt eine bereinigte Kopie eines PlatformIO-Projekts:
+- Entfernt alle Kommentare (konfigurierbar)
+- Ersetzt Variablen/Funktionen durch generische Bezeichnungen
+- Fügt Copyright-Header hinzu (lib/Askoheat)
+- Kopiert nur verwendete Libraries (selektiv)
+- Kompiliert das Projekt zur Verifikation
+
+Autor: Automatisch generiert
+Datum: 2026-06-02
+Version: 2.0.0
+"""
+
+import os
+import sys
+import re
+import shutil
+import subprocess
+import argparse
+import json
+from pathlib import Path
+from typing import Dict, Set, List, Tuple, Optional
+import hashlib
+import fnmatch
+
+# YAML Support (mit Fallback auf JSON)
+try:
+    import yaml
+    HAS_YAML = True
+except ImportError:
+    HAS_YAML = False
+    print("[WARNUNG] PyYAML nicht installiert. Verwende JSON-Fallback.")
+    print("[INFO] Installiere mit: pip install pyyaml")
+
+
+class CodeObfuscator:
+    """Hauptklasse für die Code-Obfuscation"""
+    
+    # C/C++ Keywords und Standard-Typen, die nicht umbenannt werden dürfen
+    RESERVED_WORDS = {
+        'auto', 'break', 'case', 'char', 'const', 'continue', 'default', 'do',
+        'double', 'else', 'enum', 'extern', 'float', 'for', 'goto', 'if',
+        'inline', 'int', 'long', 'register', 'return', 'short', 'signed',
+        'sizeof', 'static', 'struct', 'switch', 'typedef', 'union', 'unsigned',
+        'void', 'volatile', 'while', 'bool', 'true', 'false', 'nullptr',
+        'class', 'namespace', 'private', 'protected', 'public', 'template',
+        'this', 'virtual', 'override', 'final', 'explicit', 'operator',
+        'new', 'delete', 'try', 'catch', 'throw', 'using', 'typename',
+        # Arduino/ESP32 häufig genutzte Funktionen
+        'pinMode', 'digitalWrite', 'digitalRead', 'analogRead', 'analogWrite',
+        'delay', 'millis', 'micros', 'Serial', 'String', 'setup', 'loop',
+        'begin', 'end', 'print', 'println', 'available', 'read', 'write',
+        'HIGH', 'LOW', 'INPUT', 'OUTPUT', 'INPUT_PULLUP',
+        # Standard-Library
+        'std', 'uint8_t', 'uint16_t', 'uint32_t', 'uint64_t',
+        'int8_t', 'int16_t', 'int32_t', 'int64_t', 'size_t',
+        'main', 'printf', 'scanf', 'malloc', 'free', 'memcpy', 'memset'
+    }
+    
+    # Dateitypen, die verarbeitet werden sollen
+    SOURCE_EXTENSIONS = {'.c', '.cpp', '.cc', '.cxx', '.h', '.hpp', '.hxx', '.ino'}
+    
+    def __init__(self, source_path: str, target_path: str, verbose: bool = False):
+        self.source_path = Path(source_path).resolve()
+        self.target_path = Path(target_path).resolve()
+        self.verbose = verbose
+        self.identifier_map: Dict[str, str] = {}
+        self.identifier_counter = 0
+        self.processed_files = 0
+        self.mapping_file = self.target_path / 'obfuscation_mapping.json'
+        
+    def log(self, message: str):
+        """Logging-Funktion"""
+        if self.verbose:
+            print(f"[INFO] {message}")
+    
+    def create_project_copy(self):
+        """Erstellt eine vollständige Kopie des Projekts"""
+        self.log(f"Erstelle Kopie von {self.source_path} nach {self.target_path}")
+        
+        if self.target_path.exists():
+            response = input(f"Zielordner {self.target_path} existiert bereits. Überschreiben? (j/n): ")
+            if response.lower() != 'j':
+                print("Abbruch.")
+                sys.exit(0)
+            shutil.rmtree(self.target_path)
+        
+        shutil.copytree(self.source_path, self.target_path, 
+                       ignore=shutil.ignore_patterns('.pio', '.vscode', '*.pyc', '__pycache__'))
+        self.log(f"Projekt kopiert: {self.target_path}")
+    
+    def remove_comments(self, content: str) -> str:
+        """Entfernt C/C++ Kommentare aus dem Code"""
+        # Entfernt /* ... */ Kommentare (auch mehrzeilig)
+        content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
+        
+        # Entfernt // Kommentare (aber nicht in Strings)
+        lines = content.split('\n')
+        cleaned_lines = []
+        
+        for line in lines:
+            # Einfache Heuristik: Entfernt // Kommentare, wenn sie nicht in Strings sind
+            in_string = False
+            in_char = False
+            result = []
+            i = 0
+            
+            while i < len(line):
+                # String-Literal Detection
+                if line[i] == '"' and (i == 0 or line[i-1] != '\\'):
+                    in_string = not in_string
+                    result.append(line[i])
+                # Char-Literal Detection
+                elif line[i] == "'" and (i == 0 or line[i-1] != '\\'):
+                    in_char = not in_char
+                    result.append(line[i])
+                # Comment Detection
+                elif line[i:i+2] == '//' and not in_string and not in_char:
+                    break  # Rest der Zeile ignorieren
+                else:
+                    result.append(line[i])
+                i += 1
+            
+            cleaned_line = ''.join(result).rstrip()
+            if cleaned_line:  # Nur nicht-leere Zeilen behalten
+                cleaned_lines.append(cleaned_line)
+        
+        return '\n'.join(cleaned_lines)
+    
+    def generate_obfuscated_name(self, original: str) -> str:
+        """Generiert einen obfuscierten Namen für einen Identifier"""
+        if original in self.identifier_map:
+            return self.identifier_map[original]
+        
+        # Prüfen ob es ein reserviertes Wort ist
+        if original in self.RESERVED_WORDS:
+            return original
+        
+        # Prüfen ob es mit einem Unterstrich beginnt (oft System-Funktionen)
+        if original.startswith('_'):
+            return original
+        
+        # Prüfen ob es Großbuchstaben enthält (oft Makros/Konstanten)
+        if original.isupper() and len(original) > 1:
+            new_name = f"C{self.identifier_counter}"
+        else:
+            new_name = f"v{self.identifier_counter}"
+        
+        self.identifier_counter += 1
+        self.identifier_map[original] = new_name
+        self.log(f"Mapping: {original} -> {new_name}")
+        
+        return new_name
+    
+    def find_identifiers(self, content: str) -> Set[str]:
+        """Findet alle Identifikatoren im Code"""
+        # Regex für C/C++ Identifikatoren
+        pattern = r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'
+        identifiers = set(re.findall(pattern, content))
+        
+        # Filtert reservierte Wörter und Standardfunktionen
+        identifiers = {id for id in identifiers if id not in self.RESERVED_WORDS}
+        
+        return identifiers
+    
+    def obfuscate_identifiers(self, content: str, identifiers: Set[str]) -> str:
+        """Ersetzt Identifikatoren durch obfuscierte Namen"""
+        # Sortiere Identifikatoren nach Länge (längste zuerst)
+        # um Teilstring-Probleme zu vermeiden
+        sorted_identifiers = sorted(identifiers, key=len, reverse=True)
+        
+        for identifier in sorted_identifiers:
+            if identifier in self.RESERVED_WORDS:
+                continue
+            
+            obfuscated = self.generate_obfuscated_name(identifier)
+            
+            # Word-Boundary Regex um nur ganze Wörter zu ersetzen
+            pattern = r'\b' + re.escape(identifier) + r'\b'
+            content = re.sub(pattern, obfuscated, content)
+        
+        return content
+    
+    def process_file(self, file_path: Path) -> bool:
+        """Verarbeitet eine einzelne Datei"""
+        try:
+            self.log(f"Verarbeite: {file_path.relative_to(self.target_path)}")
+            
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+            
+            # Schritt 1: Kommentare entfernen
+            content = self.remove_comments(content)
+            
+            # Schritt 2: Identifikatoren finden
+            identifiers = self.find_identifiers(content)
+            
+            # Schritt 3: Identifikatoren obfuscieren
+            content = self.obfuscate_identifiers(content, identifiers)
+            
+            # Datei überschreiben
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+            
+            self.processed_files += 1
+            return True
+            
+        except Exception as e:
+            print(f"[FEHLER] Fehler beim Verarbeiten von {file_path}: {e}")
+            return False
+    
+    def process_all_files(self):
+        """Verarbeitet alle relevanten Dateien im Projekt"""
+        self.log("Starte Code-Obfuscation...")
+        
+        for root, dirs, files in os.walk(self.target_path):
+            # Ignoriere bestimmte Verzeichnisse
+            dirs[:] = [d for d in dirs if d not in {'.pio', '.vscode', '.git', '__pycache__'}]
+            
+            for file in files:
+                file_path = Path(root) / file
+                if file_path.suffix in self.SOURCE_EXTENSIONS:
+                    self.process_file(file_path)
+        
+        self.log(f"Fertig! {self.processed_files} Dateien verarbeitet.")
+    
+    def save_mapping(self):
+        """Speichert das Identifier-Mapping in eine JSON-Datei"""
+        self.log(f"Speichere Mapping in {self.mapping_file}")
+        
+        with open(self.mapping_file, 'w', encoding='utf-8') as f:
+            json.dump(self.identifier_map, f, indent=2, sort_keys=True)
+        
+        print(f"\n[INFO] Obfuscation-Mapping gespeichert: {self.mapping_file}")
+        print(f"[INFO] Anzahl obfuscierter Identifikatoren: {len(self.identifier_map)}")
+    
+    def compile_project(self) -> bool:
+        """Kompiliert das obfuscierte Projekt mit PlatformIO"""
+        print("\n" + "="*60)
+        print("KOMPILIERUNG")
+        print("="*60)
+        
+        try:
+            # Prüfe ob PlatformIO installiert ist
+            result = subprocess.run(['pio', '--version'], 
+                                   capture_output=True, 
+                                   text=True, 
+                                   timeout=10)
+            
+            if result.returncode != 0:
+                print("[FEHLER] PlatformIO ist nicht installiert oder nicht im PATH.")
+                return False
+            
+            self.log(f"PlatformIO Version: {result.stdout.strip()}")
+            
+            # Wechsle ins Zielverzeichnis und kompiliere
+            print(f"\n[INFO] Kompiliere Projekt in {self.target_path}...")
+            print("[INFO] Dies kann einige Minuten dauern...\n")
+            
+            result = subprocess.run(['pio', 'run'], 
+                                   cwd=self.target_path,
+                                   capture_output=True,
+                                   text=True,
+                                   timeout=600)  # 10 Minuten Timeout
+            
+            if result.returncode == 0:
+                print("[ERFOLG] ✓ Kompilierung erfolgreich!")
+                print("\n--- Build Output (letzte Zeilen) ---")
+                print('\n'.join(result.stdout.split('\n')[-20:]))
+                return True
+            else:
+                print("[FEHLER] ✗ Kompilierung fehlgeschlagen!")
+                print("\n--- Error Output ---")
+                print(result.stderr)
+                print("\n--- Build Output ---")
+                print(result.stdout)
+                return False
+                
+        except subprocess.TimeoutExpired:
+            print("[FEHLER] Kompilierung Timeout (>10 Minuten)")
+            return False
+        except FileNotFoundError:
+            print("[FEHLER] 'pio' Kommando nicht gefunden. Ist PlatformIO installiert?")
+            return False
+        except Exception as e:
+            print(f"[FEHLER] Unerwarteter Fehler bei der Kompilierung: {e}")
+            return False
+    
+    def run(self, skip_compile: bool = False):
+        """Hauptfunktion: Führt den gesamten Obfuscation-Prozess aus"""
+        print("="*60)
+        print("PlatformIO PROJECT OBFUSCATOR")
+        print("="*60)
+        print(f"Source: {self.source_path}")
+        print(f"Target: {self.target_path}")
+        print("="*60 + "\n")
+        
+        # Schritt 1: Projekt kopieren
+        self.create_project_copy()
+        
+        # Schritt 2: Dateien verarbeiten
+        self.process_all_files()
+        
+        # Schritt 3: Mapping speichern
+        self.save_mapping()
+        
+        # Schritt 4: Kompilieren
+        if not skip_compile:
+            compile_success = self.compile_project()
+            
+            print("\n" + "="*60)
+            print("ZUSAMMENFASSUNG")
+            print("="*60)
+            print(f"Verarbeitete Dateien: {self.processed_files}")
+            print(f"Obfuscierte Identifikatoren: {len(self.identifier_map)}")
+            print(f"Kompilierung: {'✓ ERFOLGREICH' if compile_success else '✗ FEHLGESCHLAGEN'}")
+            print(f"Obfusciertes Projekt: {self.target_path}")
+            print("="*60 + "\n")
+            
+            if not compile_success:
+                print("[WARNUNG] Die Kompilierung ist fehlgeschlagen.")
+                print("[HINWEIS] Das obfuscierte Projekt könnte Fehler enthalten.")
+                print("[TIPP] Prüfe die Compiler-Fehler und passe ggf. RESERVED_WORDS an.")
+        else:
+            print("\n[INFO] Kompilierung wurde übersprungen (--skip-compile)")
+            print(f"[INFO] Obfusciertes Projekt: {self.target_path}\n")
+
+
+def main():
+    """Haupteinstiegspunkt"""
+    parser = argparse.ArgumentParser(
+        description='PlatformIO Project Obfuscator - Entfernt Kommentare und obfusciert Code',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Beispiele:
+  %(prog)s /path/to/source /path/to/target
+  %(prog)s /path/to/source /path/to/target --verbose
+  %(prog)s /path/to/source /path/to/target --skip-compile
+        """
+    )
+    
+    parser.add_argument('source', 
+                       help='Quellpfad des PlatformIO-Projekts')
+    parser.add_argument('target', 
+                       help='Zielpfad für das obfuscierte Projekt')
+    parser.add_argument('-v', '--verbose', 
+                       action='store_true',
+                       help='Ausführliche Ausgabe')
+    parser.add_argument('-s', '--skip-compile',
+                       action='store_true',
+                       help='Kompilierung überspringen')
+    
+    args = parser.parse_args()
+    
+    # Validierung
+    source = Path(args.source)
+    if not source.exists():
+        print(f"[FEHLER] Quellpfad existiert nicht: {source}")
+        sys.exit(1)
+    
+    if not (source / 'platformio.ini').exists():
+        print(f"[FEHLER] Kein PlatformIO-Projekt gefunden (platformio.ini fehlt)")
+        sys.exit(1)
+    
+    # Obfuscator ausführen
+    obfuscator = CodeObfuscator(args.source, args.target, args.verbose)
+    
+    try:
+        obfuscator.run(skip_compile=args.skip_compile)
+    except KeyboardInterrupt:
+        print("\n\n[ABBRUCH] Durch Benutzer unterbrochen.")
+        sys.exit(1)
+    except Exception as e:
+        print(f"\n[FEHLER] Unerwarteter Fehler: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()

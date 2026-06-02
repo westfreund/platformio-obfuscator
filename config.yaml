@@ -1,0 +1,125 @@
+# Obfuscator Configuration File
+# ==============================
+# Konfiguration für das PlatformIO Project Obfuscator Tool
+
+# Copyright Header
+# ----------------
+# Pfad zur Datei mit dem Copyright-Header-Template
+# Dieser Header wird allen Dateien in lib/Askoheat vorangestellt
+copyright_header_file: "copyright_header.txt"
+
+# Obfuscation Settings
+# --------------------
+# Dateitypen, die obfusciert werden sollen
+obfuscate_extensions:
+  - .c
+  - .cpp
+  - .cc
+  - .cxx
+  - .h
+  - .hpp
+  - .hxx
+  - .ino
+
+# Ordner, die vollständig obfusciert werden sollen
+# (Kommentare entfernen + Variablen umbenennen)
+obfuscate_folders:
+  - "src"
+  - "lib/Askoheat"
+  - "include"
+
+# Library Handling
+# ----------------
+# Wenn true, werden nur tatsächlich verwendete Library-Dateien kopiert
+# Beispiele und nicht verwendete Dateien werden übersprungen
+copy_only_used_libraries: true
+
+# Libraries, die NICHT obfusciert werden (nur kopiert, Kommentare bleiben)
+# Alle lib/* Ordner außer Askoheat
+preserve_libraries:
+  - "lib/Adafruit_ADS1X15"
+  - "lib/Adafruit-MCP23008"
+  - "lib/ArduinoJson"
+  - "lib/arduinoWebSockets"
+  - "lib/AsyncMqttClient-esphome"
+  - "lib/AsyncTCP-esphome"
+  - "lib/ConfigManager"
+  - "lib/EEPROM"
+  - "lib/esp32_https_server"
+  - "lib/ESP32Ping"
+  - "lib/ESP32SSDP"
+  - "lib/ESPAsyncTCP-esphome"
+  - "lib/ESPAsyncWebServer"
+  - "lib/ESPPerfectTime"
+  - "lib/MCP23017"
+  - "lib/nvs_flash"
+  - "lib/Preferences"
+  - "lib/tinyxml2-master"
+  - "lib/U8g2"
+  - "lib/Update"
+  - "lib/WiFi"
+
+# Ordner/Dateien, die beim Kopieren von Libraries ignoriert werden sollen
+library_ignore_patterns:
+  - "examples"
+  - "examples/**"
+  - "test"
+  - "tests"
+  - "test/**"
+  - "tests/**"
+  - "docs"
+  - "doc"
+  - "documentation"
+  - "*.md"
+  - "README*"
+  - "LICENSE*"
+  - "CHANGELOG*"
+  - ".git"
+  - ".github"
+  - ".vscode"
+  - "*.pdf"
+  - "*.png"
+  - "*.jpg"
+  - "*.jpeg"
+
+# Project Copying
+# ---------------
+# Ordner, die beim Projekt-Kopieren ignoriert werden
+project_ignore_patterns:
+  - ".pio"
+  - ".vscode"
+  - ".git"
+  - "__pycache__"
+  - "*.pyc"
+  - ".DS_Store"
+
+# Compilation
+# -----------
+# Kompilierung nach der Obfuscation ausführen
+compile_after_obfuscation: true
+
+# Timeout für Kompilierung in Sekunden (600 = 10 Minuten)
+compilation_timeout: 600
+
+# Output
+# ------
+# Ausführliche Ausgabe
+verbose: false
+
+# Name der Mapping-Datei (Original → Obfusciert)
+mapping_file: "obfuscation_mapping.json"
+
+# Advanced Settings
+# -----------------
+# Zusätzliche reservierte Wörter, die nicht umbenannt werden sollen
+# (Werden zu den Standard RESERVED_WORDS hinzugefügt)
+additional_reserved_words: []
+  # Beispiel:
+  # - "myCustomFunction"
+  # - "CUSTOM_CONSTANT"
+
+# Prefix für obfuscierte Variablen (Standard: "v")
+variable_prefix: "v"
+
+# Prefix für obfuscierte Konstanten (Standard: "C")
+constant_prefix: "C"

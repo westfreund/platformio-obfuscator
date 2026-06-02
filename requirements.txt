@@ -1,0 +1,27 @@
+# Python Requirements für PlatformIO Project Obfuscator v2.0
+
+# Standard-Library (keine Installation erforderlich)
+# Das Tool verwendet: os, sys, re, shutil, subprocess, argparse, json, 
+# pathlib, typing, hashlib, fnmatch
+
+# Optional: PyYAML für YAML-Konfigurationsunterstützung
+# Ohne PyYAML kann auch JSON verwendet werden
+pyyaml>=5.1
+
+# Für die Ausführung wird benötigt:
+# - Python 3.7+
+
+# Für die Kompilierung wird benötigt:
+# - PlatformIO Core (nicht über pip installierbar in diesem Kontext)
+#
+# Installation von PlatformIO:
+#   pip install platformio
+# oder
+#   brew install platformio (macOS)
+
+# Installation der optionalen Abhängigkeiten:
+#   pip install -r requirements.txt
+#
+# Oder nur PyYAML:
+#   pip install pyyaml
+
