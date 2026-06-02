@@ -446,8 +446,21 @@ class CodeObfuscator:
         """Ersetzt Identifier nur außerhalb von String- und Char-Literalen"""
         result = []
         i = 0
+        in_include = False  # Track if we're in an #include directive
         
         while i < len(content):
+            # Check for #include directive (protect angle brackets in includes)
+            if i == 0 or content[i-1] == '\n':
+                # Check if this line starts with #include
+                line_start = i
+                # Skip whitespace
+                while i < len(content) and content[i] in ' \t':
+                    result.append(content[i])
+                    i += 1
+                # Check for #include
+                if i < len(content) and content[i:i+8] == '#include':
+                    in_include = True
+            
             # String-Literal erkennen
             if content[i] == '"':
                 # Finde Ende des Strings (mit Escape-Handling)
@@ -482,6 +495,27 @@ class CodeObfuscator:
                         i += 1
                         break
                     i += 1
+                continue
+            
+            # Angle-Bracket-Literal in #include erkennen
+            elif content[i] == '<' and in_include:
+                # Finde Ende des Angle-Bracket-Literals
+                result.append(content[i])
+                i += 1
+                while i < len(content):
+                    result.append(content[i])
+                    if content[i] == '>':
+                        # Angle-Bracket-Ende gefunden
+                        i += 1
+                        break
+                    i += 1
+                continue
+            
+            # Newline resets in_include flag
+            elif content[i] == '\n':
+                in_include = False
+                result.append(content[i])
+                i += 1
                 continue
             
             # Normale Code-Ersetzung (außerhalb von Strings)

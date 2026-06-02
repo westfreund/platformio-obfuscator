@@ -4,6 +4,19 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 
 ---
 
+## [2.1.4] - 2026-06-02
+
+### 🐛 Bugfixes
+
+#### Angle-Bracket Includes werden nicht mehr obfusciert
+- **BUGFIX**: Dateinamen in `<...>` Includes wurden obfusciert
+- **Problem behoben**: `#include <relay_config.h>` wurde zu `#include <v390.v367>`
+- **Lösung**: `_replace_outside_strings()` schützt jetzt auch angle brackets in #include
+- **Erweiterte Protection**: Trackt #include Direktiven und schützt `<...>` Inhalte
+- **Ergebnis**: Beide Include-Formate funktionieren korrekt
+
+---
+
 ## [2.1.3] - 2026-06-02
 
 ### 🐛 Bugfixes
