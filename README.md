@@ -1,11 +1,11 @@
-# PlatformIO Project Obfuscator v2.0
+# PlatformIO Project Obfuscator v3.0
 
-Ein erweitertes Python-Tool zur automatischen Code-Obfuscation von PlatformIO-Projekten. Das Tool entfernt selektiv Kommentare, ersetzt Variablen- und Funktionsnamen durch generische Bezeichnungen, fügt Copyright-Header hinzu und kopiert nur verwendete Libraries, während die Funktionalität des Codes erhalten bleibt.
+Ein erweitertes Python-Tool zur automatischen Code-Obfuscation von PlatformIO-Projekten. Das Tool entfernt selektiv Kommentare, ersetzt Variablen- und Funktionsnamen durch generische Bezeichnungen, fügt Copyright-Header hinzu und kopiert nur verwendete Libraries, während die Funktionalität des Codes erhalten bleibt. **Version 3.0 bietet vollständig konfigurierbare Protection Lists für granulare Kontrolle über die Verschleierung.**
 
 ## 📋 Inhaltsverzeichnis
 
 - [Überblick](#überblick)
-- [Was ist neu in v2.0](#was-ist-neu-in-v20)
+- [Was ist neu in v3.0](#was-ist-neu-in-v30)
 - [Features](#features)
 - [Voraussetzungen](#voraussetzungen)
 - [Installation](#installation)
@@ -24,56 +24,81 @@ Ein erweitertes Python-Tool zur automatischen Code-Obfuscation von PlatformIO-Pr
 
 Dieses Tool wurde entwickelt, um PlatformIO-Projekte für die Veröffentlichung vorzubereiten, indem es:
 
-1. **Copyright-Header hinzufügt**: Konfigurierbare Copyright-Header für definierte Ordner (z.B. `src`, `lib/Kaninchen`, `include`)
-2. **Selektiv obfusciert**: Nur definierte Ordner (`src`, `lib/Kaninchen`, `include`) werden obfusciert
+1. **Copyright-Header hinzufügt**: Konfigurierbare Copyright-Header für definierte Ordner (z.B. `src`, `lib/Askoheat`, `include`)
+2. **Selektiv obfusciert**: Nur definierte Ordner (`src`, `lib/Askoheat`, `include`) werden obfusciert
 3. **Flexible Verschleierung**: 4 verschiedene Verschleierungsstile - von einfach bis hochgradig obfusciert
-4. **Libraries schützt**: Externe Libraries bleiben lesbar - nur eigener Code wird obfusciert
-5. **Intelligent kopiert**: Nur verwendete Libraries werden kopiert, Beispiele werden entfernt
-6. **Kommentare entfernt**: Alle `//` und `/* */` Kommentare werden aus obfuscierten Ordnern entfernt
-7. **Code obfusciert**: Variablen, Funktionen und andere Identifikatoren werden durch generische Namen ersetzt
-8. **Projekt kopiert**: Das Originalprojekt bleibt unverändert, es wird eine neue Kopie erstellt
-9. **Kompilierung prüft**: Das obfuscierte Projekt wird automatisch kompiliert, um die Funktionalität zu verifizieren
+4. **Granulare Kontrolle** *(NEU in v3.0)*: Definiere genau, welche Begriffe, Funktionen und Libraries geschützt bleiben
+5. **Libraries schützt**: Externe Libraries bleiben lesbar - nur eigener Code wird obfusciert
+6. **Intelligent kopiert**: Nur verwendete Libraries werden kopiert, Beispiele werden entfernt
+7. **Kommentare entfernt**: Alle `//` und `/* */` Kommentare werden aus obfuscierten Ordnern entfernt
+8. **Code obfusciert**: Variablen, Funktionen und andere Identifikatoren werden durch generische Namen ersetzt
+9. **Projekt kopiert**: Das Originalprojekt bleibt unverändert, es wird eine neue Kopie erstellt
+10. **Kompilierung prüft**: Das obfuscierte Projekt wird automatisch kompiliert, um die Funktionalität zu verifizieren
 
 ---
 
-## 🆕 Was ist neu in v2.0?
+## 🆕 Was ist neu in v3.0?
 
-### Hauptfeatures
+### 🚀 Major Release: Konfigurierbare Protection Lists
 
-#### ✨ Copyright-Header-System
-- Automatisches Hinzufügen von Copyright-Headern zu konfigurierbaren Ordnern
-- Standard: `src`, `lib/Kaninchen`, `include` (vollständig anpassbar)
-- Vollständig anpassbar über `copyright_header.txt`
-- Unterstützt alle gängigen Lizenz-Stile (MIT, GPL, proprietär, etc.)
+**Version 3.0 führt 5 editierbare Listen ein, mit denen Sie präzise steuern können, was obfusciert wird und was nicht.**
 
-#### ✨ Selektive Library-Verarbeitung
-- **Dependency-Analyse**: Erkennt automatisch, welche Libraries tatsächlich verwendet werden
-- **Preservation-Mode**: Externe Libraries werden NICHT obfusciert - Kommentare und Namen bleiben erhalten
-- **Intelligentes Filtering**: Beispiele, Tests, Dokumentation werden automatisch aus Libraries entfernt
-- **Projektgrößen-Optimierung**: Reduziert Projektgröße erheblich durch Entfernen ungenutzter Dateien
+#### 1. Reserved Keywords (reserved_keywords)
+- **~70 vordefinierte C/C++ Keywords, Preprocessor-Direktiven, Arduino-Funktionen**
+- **Vollständig editierbar**: Passen Sie die Liste an Ihr Projekt an
+- **Kategorien**: C/C++ Keywords, Preprocessor-Direktiven (include, define, ifdef, ...), Arduino-spezifische Begriffe
+- **Garantiert geschützt**: Diese Keywords werden niemals obfusciert
 
-#### ✨ YAML-Konfigurationssystem
-- Umfassende `config.yaml` für alle Einstellungen
-- Definiere selbst, welche Ordner obfusciert werden sollen
-- Konfigurierbare Copyright-Ordner (nicht mehr hardcoded auf `lib/Kaninchen`)
-- Konfigurierbare Library-Behandlung
-- **4 Verschleierungsstile**: `simple`, `random`, `hex`, `numbered`
-  - `simple`: v0, v1, C0, C1 (schnell lesbar)
-  - `random`: z8K3a, mP9xQ (hochgradig obfusciert)
-  - `hex`: x4F2A, x7B3C (Hex-basiert)
-  - `numbered`: var_0, var_1, const_0 (beschreibend)
-- Anpassbare Identifier-Länge (bei random/hex)
+#### 2. Reserved Datatypes (reserved_datatypes)  
+- **Standard-Datentypen**: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t
+- **Erweiterte Typen**: size_t, ptrdiff_t, intptr_t, uintptr_t, wchar_t, char16_t, char32_t
+- **Arduino-Typen**: byte, word, String, boolean
+- **Type Safety**: Garantierte Korrektheit Ihrer Datentypen
 
-### Detaillierte Änderungen
+#### 3. Protected Functions (protected_functions)
+- **Optional**: Wählen Sie, welche Funktionen lesbar bleiben
+- **Strategische Verschleierung**: 
+  - Leer lassen = **maximale Verschleierung** (ALLE Funktionen werden obfusciert)
+  - Gefüllt = nur gelistete Funktionen bleiben lesbar
+- **Default**: setup, loop, main (Arduino/ESP32 Entry Points)
+- **Use Case**: Behalten Sie API-Funktionen lesbar, verschleiern Sie Implementierungs-Details
 
-Siehe [CHANGELOG.md](CHANGELOG.md) für vollständige Liste.
+#### 4. Protected Library Names (protected_library_names)
+- **~30 vordefinierte Library-Klassen**: Serial, WiFi, Wire, SPI, EEPROM, HTTPClient, ArduinoJson, ...
+- **Standard-Bibliotheken geschützt**: Ihre Code bleibt kompatibel mit Arduino/ESP32-Ökosystem
+- **Erweiterbar**: Fügen Sie eigene Library-Namen hinzu
+
+#### 5. String Obfuscation (obfuscate_strings) - EXPERIMENTELL
+- **NEUE Option**: Optional auch String-Literale verschleiern
+- **Standard: Deaktiviert** (sicher und stabil)
+- **Protected String Patterns**: Definieren Sie Muster für Strings, die NICHT verschleiert werden sollen
+  - Header-Dateinamen: *.h, *.hpp
+  - URLs: http://*, https://*, mqtt://*, ws://*, wss://*
+- **WARNUNG**: Kann Code brechen - mit Vorsicht einsetzen!
+
+### 🔧 Weitere Verbesserungen
+
+- **Erweiterte Statistiken**: Sehen Sie Reserved Words Count, Protected Functions Count, Protected Libraries Count beim Start
+- **Refactored Code**: Dynamisches Reserved Words System statt statisches Set
+- **Bessere Transparenz**: Detailliertes Logging über geladene Protection-Listen
+- **Vollständig rückwärtskompatibel**: Ohne neue Config-Keys verhält sich v3.0 wie v2.x
 
 ---
 
 ## ✨ Features
 
-### v2.1 Features (NEU!)
-- ✅ **Konfigurierbare Copyright-Ordner**: Copyright-Header nicht mehr auf `lib/Kaninchen` beschränkt
+### v3.0 Features (NEU!)
+- ✅ **5 editierbare Protection Lists**: Granulare Kontrolle über Verschleierung
+- ✅ **Reserved Keywords**: ~70 vordefinierte C/C++ Keywords, Preprocessor-Direktiven, Arduino-Funktionen
+- ✅ **Reserved Datatypes**: Schutz für int8_t, uint8_t, size_t, String, byte, word, ...
+- ✅ **Protected Functions**: Optional Funktionen schützen (setup, loop, main)
+- ✅ **Protected Library Names**: ~30 vordefinierte Library-Klassen (Serial, WiFi, HTTPClient, ...)
+- ✅ **String Obfuscation**: Experimentelle Option für String-Literal-Verschleierung
+- ✅ **Erweiterte Statistiken**: Detaillierte Info über aktive Protection-Optionen
+- ✅ **Vollständig konfigurierbar**: Jede Liste kann in config.yaml angepasst werden
+
+### v2.1 Features
+- ✅ **Konfigurierbare Copyright-Ordner**: Copyright-Header nicht mehr auf `lib/Askoheat` beschränkt
 - ✅ **Mehrere Verschleierungsstile**: 4 verschiedene Obfuscation-Modi (simple, random, hex, numbered)
 - ✅ **Erweiterte src-Unterstützung**: src-Ordner kann nun auch Copyright-Header erhalten
 - ✅ **Anpassbare Obfuscation-Tiefe**: Definiere Verschleierungsintensität nach Bedarf

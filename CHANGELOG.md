@@ -4,6 +4,97 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 
 ---
 
+## [3.0.0] - 2026-06-02
+
+### 🚀 Major Release: Konfigurierbare Protection Lists
+
+#### Editierbare Listen für geschützte Begriffe
+- **5 neue Konfigurationslisten** in config.yaml für granulare Kontrolle
+- **Volle Flexibilität**: Definiere selbst, was obfusciert wird und was nicht
+
+#### 1. Reserved Keywords (reserved_keywords)
+- **Umfassende Keyword-Protection**: Alle C/C++ Keywords, Preprocessor-Direktiven, Arduino-Funktionen
+- **Vollständig editierbar**: Standard-Liste mit ~70 Keywords kann erweitert werden
+- **Kategoriensicherheit**: 
+  - C/C++ Keywords: auto, break, case, char, const, continue, default, do, double, else, enum, extern, float, for, goto, if, inline, int, long, register, restrict, return, short, signed, sizeof, static, struct, switch, typedef, union, unsigned, void, volatile, while, bool, true, false, class, private, protected, public, virtual, override, final, namespace, template, typename, this, new, delete, try, catch, throw
+  - Preprocessor: include, define, undef, ifdef, ifndef, if, elif, else, endif, pragma, error, warning, line
+  - Arduino-spezifisch: HIGH, LOW, INPUT, OUTPUT, INPUT_PULLUP, LED_BUILTIN
+- **Immer geschützt**: Diese Keywords werden niemals obfusciert
+
+#### 2. Reserved Datatypes (reserved_datatypes)
+- **Standard-Datentypen schützen**: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t
+- **Erweiterte Typen**: size_t, ptrdiff_t, intptr_t, uintptr_t, wchar_t, char16_t, char32_t
+- **Arduino-Typen**: byte, word, String, boolean
+- **Vollständig erweiterbar**: Füge eigene Datentypen hinzu
+- **Garantierte Korrektheit**: Type Safety bleibt erhalten
+
+#### 3. Protected Functions (protected_functions)
+- **Optionale Funktions-Protection**: Wähle welche Funktionen lesbar bleiben
+- **Empfohlene Defaults**: setup, loop, main (für Arduino/ESP32)
+- **Strategische Wahl**: 
+  - Leer lassen = maximale Verschleierung (ALLE Funktionen werden obfusciert)
+  - Gefüllt = nur gelistete Funktionen bleiben lesbar
+- **Use Case**: Behalte API-Funktionen lesbar, verschleiere Implementierungs-Details
+
+#### 4. Protected Library Names (protected_library_names)
+- **Standard-Library Protection**: Serial, WiFi, Wire, SPI, EEPROM, String, IPAddress
+- **Netzwerk-Klassen**: Client, Server, UDP, WiFiClient, WiFiServer, WiFiUDP, WebServer, HTTPClient
+- **File System**: File, SD, Stream, Print, Printable
+- **Hardware**: HardwareSerial, SoftwareSerial, TwoWire, SPIClass
+- **Third-Party**: PubSubClient, ArduinoJson, JsonDocument, JsonObject, JsonArray
+- **Umfassende Liste**: ~30 häufig genutzte Library-Klassen vorgeschützt
+- **Erweiterbar**: Füge eigene Library-Namen hinzu
+
+#### 5. String Obfuscation (obfuscate_strings)
+- **NEUE Option**: Optional auch String-Literale verschleiern
+- **Standard: Deaktiviert** (obfuscate_strings: false) - sicher und stabil
+- **WARNUNG bei Aktivierung**: Kann Code brechen, der auf feste String-Werte angewiesen ist!
+- **Automatische Protection**: Include-Statements und Preprocessor-Strings werden immer geschützt
+- **Protected String Patterns**: Optional Muster definieren für Strings, die NICHT verschleiert werden sollen:
+  - Header-Dateinamen: *.h, *.hpp, *.c, *.cpp
+  - URLs: http://*, https://*, mqtt://*, ws://*, wss://*
+  - Sonderzeichen: /, ., ,
+- **Experimentelles Feature**: Für maximale Verschleierung, mit Vorsicht einsetzen!
+
+### 🔧 Interne Verbesserungen
+
+#### Refactored Reserved Words System
+- **Von statischem Set zu dynamischer Instanzvariable**: `self.reserved_words` statt `self.RESERVED_WORDS`
+- **Wird in `__init__` befüllt**: Kombiniert Basis-Keywords, Config-Listen, protected functions, protected libraries
+- **Konsistente Verwendung**: Alle Methoden (`generate_obfuscated_name`, `find_identifiers`, `obfuscate_identifiers`) nutzen `self.reserved_words`
+- **Logging**: Detaillierte Info über geladene Protection-Listen beim Start
+
+#### Erweiterte Statistiken
+- **Neue Ausgaben im run()**: 
+  - Reserved Words Count
+  - Protected Functions Count
+  - Protected Libraries Count  
+  - String Obfuscation Status (Enabled/Disabled)
+- **Bessere Transparenz**: Sehe auf einen Blick, welche Protection-Optionen aktiv sind
+
+### 📚 Dokumentation
+- **config.yaml erweitert**: Umfassende neue Sektion "Reserved Names Protection (Version 3.0)"
+- **Ausführliche Kommentare**: Jede Liste erklärt mit Beispielen und Use Cases
+- **Best Practices**: Empfehlungen für verschiedene Verschleierungs-Szenarien
+
+### ⚙️ Konfiguration
+```yaml
+# Version 3.0: Neue Optionen
+reserved_keywords: [auto, break, case, ...]  # ~70 Einträge
+reserved_datatypes: [int8_t, uint8_t, ...]   # ~18 Einträge
+protected_functions: [setup, loop, main]      # Optional
+protected_library_names: [Serial, WiFi, ...]  # ~30 Einträge
+obfuscate_strings: false                      # Experimentell
+protected_string_patterns: [*.h, http://*, ...] # Optional
+```
+
+### 🎯 Breaking Changes
+- **Keine**: Version 3.0 ist vollständig rückwärtskompatibel zu 2.x
+- **Neue Config-Optionen sind optional**: Ohne neue Keys in config.yaml verhält sich das Tool wie Version 2.x
+- **Defaults sind sicher**: Alle neuen Features sind konservativ konfiguriert
+
+---
+
 ## [2.1.5] - 2026-06-02
 
 ### 🐛 Bugfixes

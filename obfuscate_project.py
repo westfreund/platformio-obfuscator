@@ -11,7 +11,7 @@ Dieses Tool erstellt eine bereinigte Kopie eines PlatformIO-Projekts:
 
 Autor: Automatisch generiert
 Datum: 2026-06-02
-Version: 2.0.0
+Version: 3.0.0
 """
 
 import os
@@ -58,7 +58,14 @@ class Config:
         'mapping_file': 'obfuscation_mapping.json',
         'additional_reserved_words': [],
         'variable_prefix': 'v',
-        'constant_prefix': 'C'
+        'constant_prefix': 'C',
+        # Version 3.0: Neue Konfigurationsoptionen
+        'reserved_keywords': [],
+        'reserved_datatypes': [],
+        'protected_functions': ['setup', 'loop', 'main'],
+        'protected_library_names': [],
+        'obfuscate_strings': False,
+        'protected_string_patterns': []
     }
     
     def __init__(self, config_file: Optional[Path] = None):
@@ -127,10 +134,39 @@ class CodeObfuscator:
         self.copyright_header = ""
         self.used_libraries: Set[str] = set()
         
-        # Erweitere RESERVED_WORDS mit zusätzlichen Wörtern aus Config
+        # Version 3.0: Erweiterte Reserved Words aus Config
+        self.reserved_words = self.RESERVED_WORDS.copy()
+        
+        # Lade zusätzliche reserved keywords aus Config
+        reserved_keywords = config.get('reserved_keywords', [])
+        if reserved_keywords:
+            self.reserved_words.update(set(reserved_keywords))
+            self.log(f"Zusätzliche Keywords geladen: {len(reserved_keywords)}")
+        
+        # Lade reserved datatypes aus Config
+        reserved_datatypes = config.get('reserved_datatypes', [])
+        if reserved_datatypes:
+            self.reserved_words.update(set(reserved_datatypes))
+            self.log(f"Zusätzliche Datentypen geladen: {len(reserved_datatypes)}")
+        
+        # Lade protected functions aus Config
+        self.protected_functions = set(config.get('protected_functions', ['setup', 'loop', 'main']))
+        self.reserved_words.update(self.protected_functions)
+        self.log(f"Geschützte Funktionen: {len(self.protected_functions)}")
+        
+        # Lade protected library names aus Config
+        self.protected_library_names = set(config.get('protected_library_names', []))
+        self.reserved_words.update(self.protected_library_names)
+        self.log(f"Geschützte Library-Namen: {len(self.protected_library_names)}")
+        
+        # String-Obfuscation Settings (Version 3.0)
+        self.obfuscate_strings = config.get('obfuscate_strings', False)
+        self.protected_string_patterns = config.get('protected_string_patterns', [])
+        
+        # Erweitere RESERVED_WORDS mit zusätzlichen Wörtern aus Config (Legacy)
         additional_words = config.get('additional_reserved_words', [])
         if additional_words:
-            self.RESERVED_WORDS = self.RESERVED_WORDS.union(set(additional_words))
+            self.reserved_words.update(set(additional_words))
         
         # Lade Copyright-Header
         self.load_copyright_header()
@@ -370,7 +406,7 @@ class CodeObfuscator:
             return self.identifier_map[original]
         
         # Prüfen ob es ein reserviertes Wort ist
-        if original in self.RESERVED_WORDS:
+        if original in self.reserved_words:
             return original
         
         # Prüfen ob es mit einem Unterstrich beginnt (oft System-Funktionen)
@@ -420,7 +456,7 @@ class CodeObfuscator:
         identifiers = set(re.findall(pattern, content))
         
         # Filtert reservierte Wörter und Standardfunktionen
-        identifiers = {id for id in identifiers if id not in self.RESERVED_WORDS}
+        identifiers = {id for id in identifiers if id not in self.reserved_words}
         
         return identifiers
     
@@ -431,7 +467,7 @@ class CodeObfuscator:
         sorted_identifiers = sorted(identifiers, key=len, reverse=True)
         
         for identifier in sorted_identifiers:
-            if identifier in self.RESERVED_WORDS:
+            if identifier in self.reserved_words:
                 continue
             
             obfuscated = self.generate_obfuscated_name(identifier)
@@ -707,11 +743,16 @@ class CodeObfuscator:
     def run(self, skip_compile: bool = False):
         """Hauptfunktion: Führt den gesamten Obfuscation-Prozess aus"""
         print("="*60)
-        print("PlatformIO PROJECT OBFUSCATOR v2.0")
+        print("PlatformIO PROJECT OBFUSCATOR v3.0")
         print("="*60)
         print(f"Source: {self.source_path}")
         print(f"Target: {self.target_path}")
         print(f"Config: {'Loaded' if self.config else 'Default'}")
+        print("-"*60)
+        print(f"Reserved Words: {len(self.reserved_words)}")
+        print(f"Protected Functions: {len(self.protected_functions)}")
+        print(f"Protected Libraries: {len(self.protected_library_names)}")
+        print(f"String Obfuscation: {'Enabled' if self.obfuscate_strings else 'Disabled'}")
         print("="*60 + "\n")
         
         # Schritt 1: Dependencies analysieren
@@ -755,7 +796,7 @@ class CodeObfuscator:
 def main():
     """Haupteinstiegspunkt"""
     parser = argparse.ArgumentParser(
-        description='PlatformIO Project Obfuscator v2.0 - Entfernt Kommentare, obfusciert Code, fügt Copyright hinzu',
+        description='PlatformIO Project Obfuscator v3.0 - Entfernt Kommentare, obfusciert Code, fügt Copyright hinzu',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Beispiele:

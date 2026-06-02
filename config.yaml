@@ -49,7 +49,7 @@ obfuscation_length: 8
 # ----------------
 # Wenn true, werden nur tatsächlich verwendete Library-Dateien kopiert
 # Beispiele und nicht verwendete Dateien werden übersprungen
-copy_only_used_libraries: true
+copy_only_used_libraries: false  # Auf false gesetzt für vollständige Library-Kopie
 
 # Libraries, die NICHT obfusciert werden (nur kopiert, Kommentare bleiben)
 # Alle lib/* Ordner außer Askoheat
@@ -98,6 +98,178 @@ library_ignore_patterns:
   - "*.png"
   - "*.jpg"
   - "*.jpeg"
+
+# Reserved Names Protection (Version 3.0)
+# ========================================
+# Editierbare Listen für Begriffe, die NICHT obfusciert werden dürfen
+
+# Reservierte Keywords (C/C++, Arduino, Preprocessor-Direktiven)
+# Diese werden IMMER geschützt
+reserved_keywords:
+  # C/C++ Keywords
+  - "auto"
+  - "break"
+  - "case"
+  - "char"
+  - "const"
+  - "continue"
+  - "default"
+  - "do"
+  - "double"
+  - "else"
+  - "enum"
+  - "extern"
+  - "float"
+  - "for"
+  - "goto"
+  - "if"
+  - "inline"
+  - "int"
+  - "long"
+  - "register"
+  - "restrict"
+  - "return"
+  - "short"
+  - "signed"
+  - "sizeof"
+  - "static"
+  - "struct"
+  - "switch"
+  - "typedef"
+  - "union"
+  - "unsigned"
+  - "void"
+  - "volatile"
+  - "while"
+  - "bool"
+  - "true"
+  - "false"
+  - "class"
+  - "private"
+  - "protected"
+  - "public"
+  - "virtual"
+  - "override"
+  - "final"
+  - "namespace"
+  - "template"
+  - "typename"
+  - "this"
+  - "new"
+  - "delete"
+  - "try"
+  - "catch"
+  - "throw"
+  # Preprocessor-Direktiven
+  - "include"
+  - "define"
+  - "undef"
+  - "ifdef"
+  - "ifndef"
+  - "if"
+  - "elif"
+  - "else"
+  - "endif"
+  - "pragma"
+  - "error"
+  - "warning"
+  - "line"
+  # Arduino-spezifisch
+  - "HIGH"
+  - "LOW"
+  - "INPUT"
+  - "OUTPUT"
+  - "INPUT_PULLUP"
+  - "LED_BUILTIN"
+
+# Reservierte Datentypen (Standard C/C++/Arduino)
+# Diese werden IMMER geschützt
+reserved_datatypes:
+  - "int8_t"
+  - "int16_t"
+  - "int32_t"
+  - "int64_t"
+  - "uint8_t"
+  - "uint16_t"
+  - "uint32_t"
+  - "uint64_t"
+  - "size_t"
+  - "ptrdiff_t"
+  - "intptr_t"
+  - "uintptr_t"
+  - "wchar_t"
+  - "char16_t"
+  - "char32_t"
+  - "byte"
+  - "word"
+  - "String"
+  - "boolean"
+
+# Geschützte Funktionsnamen (OPTIONAL)
+# Leer = ALLE Funktionen werden obfusciert (empfohlen für maximale Verschleierung)
+# Gefüllt = nur gelistete Funktionen bleiben lesbar
+# Hinweis: setup() und loop() sollten für Arduino-Sketches geschützt werden
+protected_functions:
+  - "setup"
+  - "loop"
+  - "main"
+
+# Geschützte Library-Namen und -Klassen
+# Diese Klassen/Namespaces werden NICHT obfusciert
+protected_library_names:
+  - "Serial"
+  - "WiFi"
+  - "Wire"
+  - "SPI"
+  - "EEPROM"
+  - "String"
+  - "IPAddress"
+  - "Client"
+  - "Server"
+  - "UDP"
+  - "File"
+  - "SD"
+  - "Ethernet"
+  - "Stream"
+  - "Print"
+  - "Printable"
+  - "HardwareSerial"
+  - "SoftwareSerial"
+  - "TwoWire"
+  - "SPIClass"
+  - "WiFiClient"
+  - "WiFiServer"
+  - "WiFiUDP"
+  - "WebServer"
+  - "HTTPClient"
+  - "PubSubClient"
+  - "ArduinoJson"
+  - "JsonDocument"
+  - "JsonObject"
+  - "JsonArray"
+
+# String-Verschleierung (Version 3.0)
+# ------------------------------------
+# Wenn true, werden auch String-Literale ("...") verschleiert
+# ACHTUNG: Dies kann Code brechen, der auf feste String-Werte angewiesen ist!
+# Include-Statements und Preprocessor-Strings werden automatisch geschützt
+obfuscate_strings: false
+
+# Optional: Muster für Strings, die NICHT verschleiert werden sollen
+# (nur relevant wenn obfuscate_strings = true)
+protected_string_patterns:
+  - "*.h"           # Header-Dateinamen
+  - "*.hpp"
+  - "*.c"
+  - "*.cpp"
+  - "http://*"      # URLs
+  - "https://*"
+  - "mqtt://*"
+  - "ws://*"
+  - "wss://*"
+  - "/"             # Pfad-Zeichen
+  - "."             # Punkt
+  - ","             # Komma
 
 # Project Copying
 # ---------------
