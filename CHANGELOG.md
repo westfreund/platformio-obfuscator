@@ -4,6 +4,19 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 
 ---
 
+## [2.1.5] - 2026-06-02
+
+### 🐛 Bugfixes
+
+#### "Kaninchen" zurück zu "Askoheat" geändert
+- **BUGFIX**: Library-Name war auf "Kaninchen" geändert worden, sollte aber "Askoheat" sein
+- **Problem behoben**: Tool suchte lib/Kaninchen im Original-Projekt, fand aber nur lib/Askoheat
+- **Geänderte Dateien**: obfuscate_project.py, config.yaml
+- **Betroffene Stellen**: analyze_dependencies(), always_include, DEFAULT_CONFIG, copyright_folders, obfuscate_folders
+- **Ergebnis**: Tool findet und kopiert jetzt die Askoheat-Library korrekt
+
+---
+
 ## [2.1.4] - 2026-06-02
 
 ### 🐛 Bugfixes

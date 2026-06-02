@@ -11,7 +11,7 @@ copyright_header_file: "copyright_header.txt"
 # (Header wird allen Code-Dateien in diesen Ordnern vorangestellt)
 copyright_folders:
   - "src"
-  - "lib/Kaninchen"
+  - "lib/Askoheat"
   - "include"
 
 # Obfuscation Settings
@@ -31,7 +31,7 @@ obfuscate_extensions:
 # (Kommentare entfernen + Variablen umbenennen)
 obfuscate_folders:
   - "src"
-  - "lib/Kaninchen"
+  - "lib/Askoheat"
   - "include"
 
 # Verschleierungsstil für Identifikatoren
@@ -52,7 +52,7 @@ obfuscation_length: 8
 copy_only_used_libraries: true
 
 # Libraries, die NICHT obfusciert werden (nur kopiert, Kommentare bleiben)
-# Alle lib/* Ordner außer Kaninchen
+# Alle lib/* Ordner außer Askoheat
 preserve_libraries:
   - "lib/Adafruit_ADS1X15"
   - "lib/Adafruit-MCP23008"

@@ -39,9 +39,9 @@ class Config:
     
     DEFAULT_CONFIG = {
         'copyright_header_file': 'copyright_header.txt',
-        'copyright_folders': ['src', 'lib/Kaninchen', 'include'],
+        'copyright_folders': ['src', 'lib/Askoheat', 'include'],
         'obfuscate_extensions': ['.c', '.cpp', '.cc', '.cxx', '.h', '.hpp', '.hxx', '.ino'],
-        'obfuscate_folders': ['src', 'lib/Kaninchen', 'include'],
+        'obfuscate_folders': ['src', 'lib/Askoheat', 'include'],
         'obfuscation_style': 'simple',
         'obfuscation_length': 8,
         'copy_only_used_libraries': True,
@@ -182,9 +182,9 @@ class CodeObfuscator:
         """Analysiert welche Libraries tatsächlich verwendet werden"""
         self.log("Analysiere Library-Dependencies...")
         
-        # Durchsuche src/ und lib/Kaninchen nach #include Statements
+        # Durchsuche src/ und lib/Askoheat nach #include Statements
         search_dirs = [self.source_path / 'src']
-        askoheat_dir = self.source_path / 'lib' / 'Kaninchen'
+        askoheat_dir = self.source_path / 'lib' / 'Askoheat'
         if askoheat_dir.exists():
             search_dirs.append(askoheat_dir)
         
@@ -223,7 +223,7 @@ class CodeObfuscator:
                             self.log(f"Fehler beim Analysieren von {file_path}: {e}")
         
         # Spezielle Libraries, die immer inkludiert werden sollten
-        always_include = {'Kaninchen'}
+        always_include = {'Askoheat'}
         self.used_libraries.update(always_include)
         
         print(f"[INFO] Verwendete Libraries ({len(self.used_libraries)}): {', '.join(sorted(self.used_libraries))}")
