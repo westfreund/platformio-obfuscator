@@ -54,7 +54,7 @@ copyright_header_file: "copyright_header.txt"
 # (Header wird allen Code-Dateien in diesen Ordnern vorangestellt)
 copyright_folders:
   - "src"           # Source-Code Ordner
-  - "lib/Askoheat"  # Eigene Library
+  - "lib/Kaninchen"  # Eigene Library
   - "include"       # Header-Dateien
 
 # Obfuscation-Einstellungen
@@ -74,7 +74,7 @@ obfuscate_extensions:
 # (Kommentare entfernen + Variablen/Funktionen umbenennen)
 obfuscate_folders:
   - "src"           # Haupt-Source-Code
-  - "lib/Askoheat"  # Eigene Library
+  - "lib/Kaninchen"  # Eigene Library
   - "include"       # Header-Dateien
 
 # Verschleierungsstil für Identifikatoren
@@ -97,7 +97,7 @@ copy_only_used_libraries: true
 
 # Libraries, die NICHT obfusciert werden
 # (Diese werden kopiert, aber Kommentare und Namen bleiben erhalten)
-# WICHTIG: Alle lib/* Ordner außer Askoheat hier auflisten!
+# WICHTIG: Alle lib/* Ordner außer Kaninchen hier auflisten!
 preserve_libraries:
   - "lib/Adafruit_ADS1X15"
   - "lib/Adafruit-MCP23008"
@@ -198,7 +198,7 @@ constant_prefix: "C"
 
 ### copyright_header.txt anpassen
 
-Die Datei `copyright_header.txt` enthält den Header, der allen Dateien in `lib/Askoheat` vorangestellt wird.
+Die Datei `copyright_header.txt` enthält den Header, der allen Dateien in `lib/Kaninchen` vorangestellt wird.
 
 #### Standard-Template:
 
@@ -291,9 +291,9 @@ Ersetze:
 
 #### `copyright_folders`
 - **Typ**: Liste von Strings
-- **Standard**: `["src", "lib/Askoheat", "include"]`
+- **Standard**: `["src", "lib/Kaninchen", "include"]`
 - **Beschreibung**: Ordner, deren Dateien einen Copyright-Header erhalten
-- **Hinweis**: Vollständig konfigurierbar - nicht mehr hardcoded auf `lib/Askoheat`
+- **Hinweis**: Vollständig konfigurierbar - nicht mehr hardcoded auf `lib/Kaninchen`
 - **Beispiel**: 
   ```yaml
   copyright_folders:
@@ -305,7 +305,7 @@ Ersetze:
 
 #### `obfuscate_folders`
 - **Typ**: Liste von Strings
-- **Standard**: `["src", "lib/Askoheat", "include"]`
+- **Standard**: `["src", "lib/Kaninchen", "include"]`
 - **Beschreibung**: Nur Dateien in diesen Ordnern werden obfusciert
 - **Beispiel**: 
   ```yaml
@@ -393,7 +393,7 @@ Ersetze:
 copyright_header_file: "my_header.txt"
 obfuscate_folders:
   - "src"
-  - "lib/Askoheat"
+  - "lib/Kaninchen"
 ```
 
 Alles andere nutzt Standard-Werte.
@@ -414,7 +414,7 @@ library_ignore_patterns: []
 ```yaml
 obfuscate_folders:
   - "src"
-  - "lib/Askoheat"
+  - "lib/Kaninchen"
   - "include"
   - "test"
 ```
@@ -527,7 +527,7 @@ python3 obfuscate_project.py source target --verbose
 ```json
 {
   "copyright_header_file": "copyright_header.txt",
-  "obfuscate_folders": ["src", "lib/Askoheat", "include"],
+  "obfuscate_folders": ["src", "lib/Kaninchen", "include"],
   "copy_only_used_libraries": true,
   "verbose": false
 }
@@ -605,7 +605,7 @@ Die wichtigsten Einstellungen für den Einstieg:
 ```yaml
 # Pflicht
 copyright_header_file: "copyright_header.txt"
-obfuscate_folders: ["src", "lib/Askoheat"]
+obfuscate_folders: ["src", "lib/Kaninchen"]
 
 # Empfohlen
 copy_only_used_libraries: true

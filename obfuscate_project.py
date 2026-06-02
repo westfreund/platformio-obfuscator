@@ -5,7 +5,7 @@ PlatformIO Project Obfuscator (Enhanced Edition)
 Dieses Tool erstellt eine bereinigte Kopie eines PlatformIO-Projekts:
 - Entfernt alle Kommentare aus definierten Ordnern
 - Ersetzt Variablen/Funktionen durch generische Bezeichnungen
-- Fügt Copyright-Header zu lib/Askoheat Dateien hinzu
+- Fügt Copyright-Header zu lib/Kaninchen Dateien hinzu
 - Kopiert nur verwendete Libraries (selektiv, ohne Beispiele)
 - Kompiliert das Projekt zur Verifikation
 
@@ -39,9 +39,9 @@ class Config:
     
     DEFAULT_CONFIG = {
         'copyright_header_file': 'copyright_header.txt',
-        'copyright_folders': ['src', 'lib/Askoheat', 'include'],
+        'copyright_folders': ['src', 'lib/Kaninchen', 'include'],
         'obfuscate_extensions': ['.c', '.cpp', '.cc', '.cxx', '.h', '.hpp', '.hxx', '.ino'],
-        'obfuscate_folders': ['src', 'lib/Askoheat', 'include'],
+        'obfuscate_folders': ['src', 'lib/Kaninchen', 'include'],
         'obfuscation_style': 'simple',
         'obfuscation_length': 8,
         'copy_only_used_libraries': True,
@@ -179,9 +179,9 @@ class CodeObfuscator:
         """Analysiert welche Libraries tatsächlich verwendet werden"""
         self.log("Analysiere Library-Dependencies...")
         
-        # Durchsuche src/ und lib/Askoheat nach #include Statements
+        # Durchsuche src/ und lib/Kaninchen nach #include Statements
         search_dirs = [self.source_path / 'src']
-        askoheat_dir = self.source_path / 'lib' / 'Askoheat'
+        askoheat_dir = self.source_path / 'lib' / 'Kaninchen'
         if askoheat_dir.exists():
             search_dirs.append(askoheat_dir)
         
@@ -220,7 +220,7 @@ class CodeObfuscator:
                             self.log(f"Fehler beim Analysieren von {file_path}: {e}")
         
         # Spezielle Libraries, die immer inkludiert werden sollten
-        always_include = {'Askoheat'}
+        always_include = {'Kaninchen'}
         self.used_libraries.update(always_include)
         
         print(f"[INFO] Verwendete Libraries ({len(self.used_libraries)}): {', '.join(sorted(self.used_libraries))}")

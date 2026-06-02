@@ -24,8 +24,8 @@ Ein erweitertes Python-Tool zur automatischen Code-Obfuscation von PlatformIO-Pr
 
 Dieses Tool wurde entwickelt, um PlatformIO-Projekte für die Veröffentlichung vorzubereiten, indem es:
 
-1. **Copyright-Header hinzufügt**: Konfigurierbare Copyright-Header für definierte Ordner (z.B. `src`, `lib/Askoheat`, `include`)
-2. **Selektiv obfusciert**: Nur definierte Ordner (`src`, `lib/Askoheat`, `include`) werden obfusciert
+1. **Copyright-Header hinzufügt**: Konfigurierbare Copyright-Header für definierte Ordner (z.B. `src`, `lib/Kaninchen`, `include`)
+2. **Selektiv obfusciert**: Nur definierte Ordner (`src`, `lib/Kaninchen`, `include`) werden obfusciert
 3. **Flexible Verschleierung**: 4 verschiedene Verschleierungsstile - von einfach bis hochgradig obfusciert
 4. **Libraries schützt**: Externe Libraries bleiben lesbar - nur eigener Code wird obfusciert
 5. **Intelligent kopiert**: Nur verwendete Libraries werden kopiert, Beispiele werden entfernt
@@ -42,7 +42,7 @@ Dieses Tool wurde entwickelt, um PlatformIO-Projekte für die Veröffentlichung 
 
 #### ✨ Copyright-Header-System
 - Automatisches Hinzufügen von Copyright-Headern zu konfigurierbaren Ordnern
-- Standard: `src`, `lib/Askoheat`, `include` (vollständig anpassbar)
+- Standard: `src`, `lib/Kaninchen`, `include` (vollständig anpassbar)
 - Vollständig anpassbar über `copyright_header.txt`
 - Unterstützt alle gängigen Lizenz-Stile (MIT, GPL, proprietär, etc.)
 
@@ -55,7 +55,7 @@ Dieses Tool wurde entwickelt, um PlatformIO-Projekte für die Veröffentlichung 
 #### ✨ YAML-Konfigurationssystem
 - Umfassende `config.yaml` für alle Einstellungen
 - Definiere selbst, welche Ordner obfusciert werden sollen
-- Konfigurierbare Copyright-Ordner (nicht mehr hardcoded auf `lib/Askoheat`)
+- Konfigurierbare Copyright-Ordner (nicht mehr hardcoded auf `lib/Kaninchen`)
 - Konfigurierbare Library-Behandlung
 - **4 Verschleierungsstile**: `simple`, `random`, `hex`, `numbered`
   - `simple`: v0, v1, C0, C1 (schnell lesbar)
@@ -73,7 +73,7 @@ Siehe [CHANGELOG.md](CHANGELOG.md) für vollständige Liste.
 ## ✨ Features
 
 ### v2.1 Features (NEU!)
-- ✅ **Konfigurierbare Copyright-Ordner**: Copyright-Header nicht mehr auf `lib/Askoheat` beschränkt
+- ✅ **Konfigurierbare Copyright-Ordner**: Copyright-Header nicht mehr auf `lib/Kaninchen` beschränkt
 - ✅ **Mehrere Verschleierungsstile**: 4 verschiedene Obfuscation-Modi (simple, random, hex, numbered)
 - ✅ **Erweiterte src-Unterstützung**: src-Ordner kann nun auch Copyright-Header erhalten
 - ✅ **Anpassbare Obfuscation-Tiefe**: Definiere Verschleierungsintensität nach Bedarf
@@ -221,7 +221,7 @@ python3 obfuscate_project.py \
 
 ```bash
 # Prüfe Copyright-Header
-head -30 /path/to/target/project/lib/Askoheat/src/main.cpp
+head -30 /path/to/target/project/lib/Kaninchen/src/main.cpp
 
 # Prüfe Mapping
 cat /path/to/target/project/obfuscation_mapping.json
@@ -323,7 +323,7 @@ Liste der Ordner, die obfusciert werden sollen (Kommentare entfernen + Umbenennu
 ```yaml
 obfuscate_folders:
   - "src"
-  - "lib/Askoheat"
+  - "lib/Kaninchen"
   - "include"
 ```
 
@@ -376,7 +376,7 @@ Beispiel `config.yaml`:
 copyright_header_file: "copyright_header.txt"
 obfuscate_folders:
   - "src"
-  - "lib/Askoheat"
+  - "lib/Kaninchen"
   - "include"
 copy_only_used_libraries: true
 preserve_libraries:
@@ -408,7 +408,7 @@ constant_prefix: "C"
 ┌──────────────────────────────────────────┐
 │  2. Dependency-Analyse                   │
 │     - Scanne src/ nach #include          │
-│     - Scanne lib/Askoheat nach #include  │
+│     - Scanne lib/Kaninchen nach #include  │
 │     - Identifiziere verwendete Libraries │
 └────────────────┬─────────────────────────┘
                  │
@@ -431,7 +431,7 @@ constant_prefix: "C"
                  ▼
 ┌──────────────────────────────────────────┐
 │  5. Copyright-Header hinzufügen          │
-│     - Nur lib/Askoheat Dateien           │
+│     - Nur lib/Kaninchen Dateien           │
 │     - Header vor Code einfügen           │
 └────────────────┬─────────────────────────┘
                  │
@@ -479,11 +479,11 @@ Das Tool verarbeitet folgende Dateitypen:
 #### Obfuscierte Ordner
 Diese Ordner werden vollständig obfusciert (konfigurierbar):
 - `src/` - Haupt-Source-Code
-- `lib/Askoheat/` - Eigene Library
+- `lib/Kaninchen/` - Eigene Library
 - `include/` - Header-Dateien
 
 **Verarbeitung**:
-1. Copyright-Header hinzufügen (nur lib/Askoheat)
+1. Copyright-Header hinzufügen (nur lib/Kaninchen)
 2. Kommentare entfernen
 3. Variablen/Funktionen umbenennen
 
@@ -513,13 +513,13 @@ Das Tool schützt automatisch:
 ### Copyright-Header-System (NEU in v2.0)
 
 #### Was wird hinzugefügt?
-- Alle `.c`, `.cpp`, `.h`, `.hpp` Dateien in `lib/Askoheat/`
+- Alle `.c`, `.cpp`, `.h`, `.hpp` Dateien in `lib/Kaninchen/`
 - Der Header wird VOR dem bestehenden Code eingefügt
 - Der Header stammt aus `copyright_header.txt`
 
 #### Beispiel:
 
-**Vorher** (`lib/Askoheat/src/sensor.cpp`):
+**Vorher** (`lib/Kaninchen/src/sensor.cpp`):
 ```cpp
 #include "sensor.h"
 

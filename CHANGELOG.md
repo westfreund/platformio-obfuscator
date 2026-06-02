@@ -10,8 +10,8 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 
 #### Konfigurierbare Copyright-Ordner
 - **Flexible Copyright-Zuordnung**: `copyright_folders` Parameter in config.yaml
-- **Nicht mehr auf lib/Askoheat beschränkt**: Jeder Ordner kann Copyright-Header erhalten
-- **Mehrere Ordner gleichzeitig**: z.B. `src`, `lib/Askoheat`, `include`, `lib/AnotherLib`
+- **Nicht mehr auf lib/Kaninchen beschränkt**: Jeder Ordner kann Copyright-Header erhalten
+- **Mehrere Ordner gleichzeitig**: z.B. `src`, `lib/Kaninchen`, `include`, `lib/AnotherLib`
 - **Vollständige Kontrolle**: Definiere genau, welche Ordner geschützt werden sollen
 
 #### Verschleierungsstile
@@ -42,7 +42,7 @@ Neue Parameter in `config.yaml`:
 # Konfigurierbare Copyright-Ordner (NEU!)
 copyright_folders:
   - "src"
-  - "lib/Askoheat"
+  - "lib/Kaninchen"
   - "include"
 
 # Verschleierungsstil (NEU!)
@@ -65,7 +65,7 @@ obfuscation_length: 8
 
 #### Wenn keine Änderungen gemacht werden:
 - Tool verhält sich exakt wie v2.0
-- Standard: `copyright_folders` enthält `["src", "lib/Askoheat", "include"]`
+- Standard: `copyright_folders` enthält `["src", "lib/Kaninchen", "include"]`
 - Standard: `obfuscation_style` ist `"simple"`
 
 #### Um neue Features zu nutzen:
@@ -96,7 +96,7 @@ obfuscation_length: 8
 ### ✨ Neue Features
 
 #### Copyright-Header-Funktion
-- **Copyright-Header für lib/Askoheat**: Alle Dateien im `lib/Askoheat` Ordner erhalten automatisch einen konfigurierbaren Copyright-Header
+- **Copyright-Header für lib/Kaninchen**: Alle Dateien im `lib/Kaninchen` Ordner erhalten automatisch einen konfigurierbaren Copyright-Header
 - **Template-System**: Der Copyright-Header wird aus einer externen Textdatei geladen (`copyright_header.txt`)
 - **Vollständig anpassbar**: Firmennamen, Kontaktdaten, Lizenzbedingungen können frei konfiguriert werden
 
@@ -104,7 +104,7 @@ obfuscation_length: 8
 - **Dependency-Analyse**: Das Tool analysiert automatisch, welche Libraries tatsächlich im Projekt verwendet werden
 - **Intelligentes Kopieren**: Nur verwendete Libraries werden kopiert (konfigurierbar)
 - **Keine Beispiele**: Beispiel-Code, Tests, Dokumentation werden automatisch aus Libraries entfernt
-- **Preserve-Modus**: Libraries außer `lib/Askoheat` werden NICHT obfusciert - Kommentare und Variablennamen bleiben erhalten
+- **Preserve-Modus**: Libraries außer `lib/Kaninchen` werden NICHT obfusciert - Kommentare und Variablennamen bleiben erhalten
 - **Pattern-basiertes Filtern**: Konfigurierbare Ignore-Patterns für unerwünschte Dateien
 
 #### Konfigurationssystem
@@ -115,7 +115,7 @@ obfuscation_length: 8
 - **Anpassbare Prefixe**: Variable und Konstanten-Prefixe sind konfigurierbar
 
 #### Erweiterte Verarbeitung
-- **Ordner-basierte Obfuscation**: Nur definierte Ordner (`src`, `lib/Askoheat`, `include`) werden obfusciert
+- **Ordner-basierte Obfuscation**: Nur definierte Ordner (`src`, `lib/Kaninchen`, `include`) werden obfusciert
 - **Preservation-Mode**: Externe Libraries bleiben lesbar und wartbar
 - **Zusätzliche Reserved Words**: Projektspezifische Funktionen können geschützt werden
 
@@ -132,7 +132,7 @@ Neue Konfigurationsparameter in `config.yaml`:
 
 ```yaml
 copyright_header_file: "copyright_header.txt"
-obfuscate_folders: ["src", "lib/Askoheat", "include"]
+obfuscate_folders: ["src", "lib/Kaninchen", "include"]
 copy_only_used_libraries: true
 preserve_libraries: [...]
 library_ignore_patterns: ["examples", "*.md", ...]
@@ -167,11 +167,11 @@ Neue Parameter:
 
 2. **Library-Obfuscation**:
    - v1.0: Obfuscierte ALLE Dateien
-   - v2.0: Obfusciert nur `src/`, `include/` und `lib/Askoheat/`
+   - v2.0: Obfusciert nur `src/`, `include/` und `lib/Kaninchen/`
 
 3. **Copyright-Header**:
    - v1.0: Keine Copyright-Header
-   - v2.0: Automatische Copyright-Header für `lib/Askoheat/`
+   - v2.0: Automatische Copyright-Header für `lib/Kaninchen/`
 
 #### Upgrade-Anleitung:
 

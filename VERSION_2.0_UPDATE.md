@@ -6,13 +6,13 @@
 
 ### Anfrage vom Benutzer:
 
-> "Könnte das Tool dann noch allen Dateien im Unterordner lib/Askoheat einen 
+> "Könnte das Tool dann noch allen Dateien im Unterordner lib/Kaninchen einen 
 > definierbaren Copyright-Kopf voranstellen? Dieser Standardkopf sollte in einer 
 > Standard-Text-Datei stehen.
 >
 > Desweiteren würde ich mich freuen, wenn nur die Dateien kopiert werden, die 
 > tatsächlich im Projekt benutzt werden. Dies gilt für den Ordner lib, außer 
-> lib/Askoheat. Ich meine damit, es sollen alle Beispiele, etc. nicht mitkopiert 
+> lib/Kaninchen. Ich meine damit, es sollen alle Beispiele, etc. nicht mitkopiert 
 > werden. In diesen Dateien sollen auch alle Kommentare und Variablennamen 
 > erhalten bleiben.
 >
@@ -26,12 +26,12 @@
 ### 1. Copyright-Header-System ✅
 
 **Anforderung:**
-- Copyright-Header für alle Dateien in `lib/Askoheat`
+- Copyright-Header für alle Dateien in `lib/Kaninchen`
 - Header aus externer Textdatei
 
 **Implementierung:**
 - **Datei**: `copyright_header.txt` (vollständig anpassbar)
-- **Anwendung**: Automatisch für alle `.c`, `.cpp`, `.h`, `.hpp` in `lib/Askoheat/`
+- **Anwendung**: Automatisch für alle `.c`, `.cpp`, `.h`, `.hpp` in `lib/Kaninchen/`
 - **Konfiguration**: `copyright_header_file` in `config.yaml`
 - **Funktionalität**: Header wird VOR dem Code eingefügt
 
@@ -57,7 +57,7 @@ def add_copyright_header(self, file_path: Path) -> bool:
 
 **Anforderung:**
 - Nur tatsächlich verwendete Dateien aus Libraries kopieren
-- Gilt für alle `lib/*` außer `lib/Askoheat`
+- Gilt für alle `lib/*` außer `lib/Kaninchen`
 - Keine Beispiele, Tests, etc.
 - Kommentare und Variablennamen in externen Libraries BEHALTEN
 
@@ -67,12 +67,12 @@ def add_copyright_header(self, file_path: Path) -> bool:
 ```python
 def analyze_dependencies(self):
     """Analysiert welche Libraries tatsächlich verwendet werden"""
-    # Scannt src/ und lib/Askoheat nach #include Statements
+    # Scannt src/ und lib/Kaninchen nach #include Statements
     # Identifiziert verwendete Libraries
 ```
 
 **Funktionsweise:**
-1. Durchsuche `src/` und `lib/Askoheat/` nach `.c`, `.cpp`, `.h` Dateien
+1. Durchsuche `src/` und `lib/Kaninchen/` nach `.c`, `.cpp`, `.h` Dateien
 2. Extrahiere alle `#include` Statements
 3. Identifiziere Library-Namen (erster Teil des Include-Pfads)
 4. Erstelle Liste verwendeter Libraries
@@ -86,7 +86,7 @@ def should_obfuscate_file(self, file_path: Path) -> bool:
 ```
 
 **Ergebnis:**
-- `lib/Askoheat/`: Obfusciert (Kommentare entfernt, Namen geändert) + Copyright-Header
+- `lib/Kaninchen/`: Obfusciert (Kommentare entfernt, Namen geändert) + Copyright-Header
 - `lib/ArduinoJson/`: NICHT obfusciert (Kommentare erhalten, Namen erhalten)
 - `lib/WiFi/`: NICHT obfusciert (Kommentare erhalten, Namen erhalten)
 - etc.
@@ -124,7 +124,7 @@ copyright_header_file: "copyright_header.txt"
 # Obfuscation-Ordner
 obfuscate_folders:
   - "src"
-  - "lib/Askoheat"
+  - "lib/Kaninchen"
   - "include"
 
 # Library-Handling
@@ -186,7 +186,7 @@ Tool sucht automatisch nach Konfigurationsdatei im aktuellen Verzeichnis.
 | **Code-Obfuscation** | ✅ Alle Dateien | ✅ Nur `obfuscate_folders` |
 | **Library-Behandlung** | Alle kopiert | ✅ Selektiv, nur verwendete |
 | **Externe Libraries** | Obfusciert | ✅ Unverändert (preserve) |
-| **Copyright-Header** | ❌ Nein | ✅ Ja (lib/Askoheat) |
+| **Copyright-Header** | ❌ Nein | ✅ Ja (lib/Kaninchen) |
 | **Library-Filtering** | ❌ Nein | ✅ Ja (examples, tests) |
 | **Konfigurationsdatei** | ❌ Nein | ✅ Ja (YAML/JSON) |
 | **Projektgröße** | 100% | ✅ 20-50% (durch Filtering) |
@@ -320,7 +320,7 @@ obfuscate_project_v1.py.backup
 
 #### Verhalten:
 - **v1.0**: Obfusciert ALLE Dateien (inkl. externe Libraries)
-- **v2.0**: Obfusciert nur `src/`, `lib/Askoheat/`, `include/`
+- **v2.0**: Obfusciert nur `src/`, `lib/Kaninchen/`, `include/`
 
 #### Library-Kopie:
 - **v1.0**: Kopiert alle Libraries vollständig
@@ -328,7 +328,7 @@ obfuscate_project_v1.py.backup
 
 #### Copyright:
 - **v1.0**: Kein Copyright-Header
-- **v2.0**: Copyright-Header für `lib/Askoheat/`
+- **v2.0**: Copyright-Header für `lib/Kaninchen/`
 
 ### Upgrade-Schritte
 
@@ -364,7 +364,7 @@ obfuscate_project_v1.py.backup
 
 ### Implementierte Anforderungen: ✅ 100%
 
-1. ✅ **Copyright-Header** für `lib/Askoheat`
+1. ✅ **Copyright-Header** für `lib/Kaninchen`
    - Aus externer Datei (`copyright_header.txt`)
    - Vollständig anpassbar
    - Automatisch eingefügt
@@ -372,7 +372,7 @@ obfuscate_project_v1.py.backup
 2. ✅ **Selektive Library-Kopie**
    - Nur verwendete Libraries (Dependency-Analyse)
    - Keine Beispiele, Tests, Dokumentation
-   - Gilt für alle `lib/*` außer `lib/Askoheat`
+   - Gilt für alle `lib/*` außer `lib/Kaninchen`
 
 3. ✅ **Preservation-Mode**
    - Externe Libraries: Kommentare ERHALTEN

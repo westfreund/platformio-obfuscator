@@ -45,7 +45,7 @@ Wichtigste Einstellungen:
 # Welche Ordner sollen obfusciert werden?
 obfuscate_folders:
   - "src"
-  - "lib/Askoheat"
+  - "lib/Kaninchen"
   - "include"
 
 # Welche Libraries sollen NICHT obfusciert werden?
@@ -72,8 +72,8 @@ python3 obfuscate_project.py \
 ### 4️⃣ Ergebnis prüfen
 
 ```bash
-# Prüfe Copyright-Header in Askoheat-Dateien
-head -35 /Users/andy/PlatformIO/GITLAB/askoheat_se_cpu-obfuscated/lib/Askoheat/src/main.cpp
+# Prüfe Copyright-Header in Kaninchen-Dateien
+head -35 /Users/andy/PlatformIO/GITLAB/askoheat_se_cpu-obfuscated/lib/Kaninchen/src/main.cpp
 
 # Prüfe ob externe Libraries unverändert sind
 cat /Users/andy/PlatformIO/GITLAB/askoheat_se_cpu-obfuscated/lib/ArduinoJson/src/ArduinoJson.h
@@ -101,7 +101,7 @@ du -sh /Users/andy/PlatformIO/GITLAB/askoheat_se_cpu-obfuscated
 ## 🆕 Was ist neu in v2.0?
 
 ### Copyright-Header
-✅ Alle `lib/Askoheat` Dateien erhalten automatisch einen Copyright-Header
+✅ Alle `lib/Kaninchen` Dateien erhalten automatisch einen Copyright-Header
 
 ### Selektive Library-Verarbeitung
 ✅ Nur verwendete Libraries werden kopiert  
@@ -111,7 +111,7 @@ du -sh /Users/andy/PlatformIO/GITLAB/askoheat_se_cpu-obfuscated
 ### Ergebnis
 - ✅ Kleineres Projekt (50-80% weniger Library-Dateien)
 - ✅ Lesbare externe Libraries (einfacher zu debuggen)
-- ✅ Geschützter eigener Code (lib/Askoheat)
+- ✅ Geschützter eigener Code (lib/Kaninchen)
 
 ---
 

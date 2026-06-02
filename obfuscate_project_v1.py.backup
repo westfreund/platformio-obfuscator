@@ -5,7 +5,7 @@ PlatformIO Project Obfuscator (Enhanced)
 Dieses Tool erstellt eine bereinigte Kopie eines PlatformIO-Projekts:
 - Entfernt alle Kommentare (konfigurierbar)
 - Ersetzt Variablen/Funktionen durch generische Bezeichnungen
-- Fügt Copyright-Header hinzu (lib/Askoheat)
+- Fügt Copyright-Header hinzu (lib/Kaninchen)
 - Kopiert nur verwendete Libraries (selektiv)
 - Kompiliert das Projekt zur Verifikation
 
