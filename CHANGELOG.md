@@ -4,6 +4,19 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 
 ---
 
+## [2.1.3] - 2026-06-02
+
+### 🐛 Bugfixes
+
+#### Strings werden nicht mehr obfusciert
+- **KRITISCHER BUGFIX**: Identifikatoren in String-Literalen wurden obfusciert
+- **Problem behoben**: #include "definitions.h" wurde zu #include "v660.v367"
+- **Lösung**: Neue `_replace_outside_strings()` Methode implementiert
+- **String-aware Ersetzung**: Trackt String-Literale ("...") und Char-Literale ('...') mit Escape-Handling
+- **Ergebnis**: Nur Code-Identifikatoren werden obfusciert, Strings bleiben intakt
+
+---
+
 ## [2.1.2] - 2026-06-02
 
 ### 🐛 Bugfixes

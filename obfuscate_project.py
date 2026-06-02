@@ -425,7 +425,7 @@ class CodeObfuscator:
         return identifiers
     
     def obfuscate_identifiers(self, content: str, identifiers: Set[str]) -> str:
-        """Ersetzt Identifikatoren durch obfuscierte Namen"""
+        """Ersetzt Identifikatoren durch obfuscierte Namen (außerhalb von Strings)"""
         # Sortiere Identifikatoren nach Länge (längste zuerst)
         # um Teilstring-Probleme zu vermeiden
         sorted_identifiers = sorted(identifiers, key=len, reverse=True)
@@ -436,11 +436,74 @@ class CodeObfuscator:
             
             obfuscated = self.generate_obfuscated_name(identifier)
             
-            # Word-Boundary Regex um nur ganze Wörter zu ersetzen
-            pattern = r'\b' + re.escape(identifier) + r'\b'
-            content = re.sub(pattern, obfuscated, content)
+            # WICHTIG: Ersetze nur außerhalb von String-Literalen
+            # Diese Funktion geht Zeichen für Zeichen durch und trackt String/Char-Literale
+            content = self._replace_outside_strings(content, identifier, obfuscated)
         
         return content
+    
+    def _replace_outside_strings(self, content: str, old_identifier: str, new_identifier: str) -> str:
+        """Ersetzt Identifier nur außerhalb von String- und Char-Literalen"""
+        result = []
+        i = 0
+        
+        while i < len(content):
+            # String-Literal erkennen
+            if content[i] == '"':
+                # Finde Ende des Strings (mit Escape-Handling)
+                result.append(content[i])
+                i += 1
+                while i < len(content):
+                    result.append(content[i])
+                    if content[i] == '\\' and i + 1 < len(content):
+                        # Escape-Sequenz überspringen
+                        i += 1
+                        result.append(content[i])
+                    elif content[i] == '"':
+                        # String-Ende gefunden
+                        i += 1
+                        break
+                    i += 1
+                continue
+            
+            # Char-Literal erkennen
+            elif content[i] == "'":
+                # Finde Ende des Char-Literals (mit Escape-Handling)
+                result.append(content[i])
+                i += 1
+                while i < len(content):
+                    result.append(content[i])
+                    if content[i] == '\\' and i + 1 < len(content):
+                        # Escape-Sequenz überspringen
+                        i += 1
+                        result.append(content[i])
+                    elif content[i] == "'":
+                        # Char-Ende gefunden
+                        i += 1
+                        break
+                    i += 1
+                continue
+            
+            # Normale Code-Ersetzung (außerhalb von Strings)
+            # Prüfe ob hier der Identifier beginnt
+            if i + len(old_identifier) <= len(content):
+                # Prüfe Word-Boundaries (vor und nach dem Identifier)
+                before_ok = (i == 0 or not content[i-1].isalnum() and content[i-1] != '_')
+                after_ok = (i + len(old_identifier) >= len(content) or 
+                           not content[i + len(old_identifier)].isalnum() and 
+                           content[i + len(old_identifier)] != '_')
+                
+                if before_ok and after_ok and content[i:i+len(old_identifier)] == old_identifier:
+                    # Identifier gefunden und Word-Boundaries stimmen
+                    result.append(new_identifier)
+                    i += len(old_identifier)
+                    continue
+            
+            # Normales Zeichen
+            result.append(content[i])
+            i += 1
+        
+        return ''.join(result)
     
     def should_obfuscate_file(self, file_path: Path) -> bool:
         """Prüft ob eine Datei obfusciert werden soll"""
