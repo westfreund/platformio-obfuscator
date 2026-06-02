@@ -48,8 +48,14 @@ python3 obfuscate_project.py source target --config my_config.yaml
 # Copyright-Header Einstellungen
 # --------------------------------
 # Pfad zur Textdatei mit dem Copyright-Header-Template
-# Dieser Header wird ALLEN Dateien in lib/Askoheat vorangestellt
 copyright_header_file: "copyright_header.txt"
+
+# Ordner, die einen Copyright-Header erhalten sollen
+# (Header wird allen Code-Dateien in diesen Ordnern vorangestellt)
+copyright_folders:
+  - "src"           # Source-Code Ordner
+  - "lib/Askoheat"  # Eigene Library
+  - "include"       # Header-Dateien
 
 # Obfuscation-Einstellungen
 # --------------------------
@@ -70,6 +76,18 @@ obfuscate_folders:
   - "src"           # Haupt-Source-Code
   - "lib/Askoheat"  # Eigene Library
   - "include"       # Header-Dateien
+
+# Verschleierungsstil für Identifikatoren
+# Mögliche Werte:
+#   "simple"   : v0, v1, v2, ... / C0, C1, C2, ... (Standard, schnell lesbar)
+#   "random"   : z8K3a, mP9xQ, ... (zufällige Buchstaben/Zahlen, hochgradig obfusciert)
+#   "hex"      : x4F2A, x7B3C, ... (Hex-basiert mit Präfix)
+#   "numbered" : var_0, var_1, ... / const_0, const_1, ... (beschreibend)
+obfuscation_style: "simple"
+
+# Länge der generierten Namen (nur bei "random" und "hex")
+# Empfohlen: 6-10 Zeichen für gute Balance zwischen Obfuscation und Lesbarkeit
+obfuscation_length: 8
 
 # Library-Handling
 # ----------------
@@ -271,6 +289,20 @@ Ersetze:
 - **Beschreibung**: Pfad zur Textdatei mit dem Copyright-Header-Template
 - **Beispiel**: `"headers/my_copyright.txt"`
 
+#### `copyright_folders`
+- **Typ**: Liste von Strings
+- **Standard**: `["src", "lib/Askoheat", "include"]`
+- **Beschreibung**: Ordner, deren Dateien einen Copyright-Header erhalten
+- **Hinweis**: Vollständig konfigurierbar - nicht mehr hardcoded auf `lib/Askoheat`
+- **Beispiel**: 
+  ```yaml
+  copyright_folders:
+    - "src"
+    - "lib/MyLib"
+    - "include"
+    - "lib/AnotherLib"
+  ```
+
 #### `obfuscate_folders`
 - **Typ**: Liste von Strings
 - **Standard**: `["src", "lib/Askoheat", "include"]`
@@ -280,6 +312,31 @@ Ersetze:
   obfuscate_folders:
     - "src"
     - "lib/MyLib"
+  ```
+
+#### `obfuscation_style`
+- **Typ**: String
+- **Standard**: `"simple"`
+- **Beschreibung**: Stil für obfuscierte Identifikatornamen
+- **Mögliche Werte**:
+  - `"simple"`: v0, v1, v2, ... / C0, C1, C2, ... (Standard, schnell lesbar)
+  - `"random"`: z8K3a, mP9xQ, Lx4rT, ... (zufällige Buchstaben/Zahlen, hochgradig obfusciert)
+  - `"hex"`: x4F2A, x7B3C, xA901, ... (Hex-basiert mit x-Präfix)
+  - `"numbered"`: var_0, var_1, ... / const_0, const_1, ... (beschreibend)
+- **Hinweis**: `random` und `hex` bieten höchste Verschleierung
+- **Beispiel**: 
+  ```yaml
+  obfuscation_style: "random"
+  ```
+
+#### `obfuscation_length`
+- **Typ**: Integer
+- **Standard**: `8`
+- **Beschreibung**: Länge der generierten Namen (nur bei `random` und `hex`)
+- **Empfohlen**: 6-10 Zeichen für gute Balance
+- **Beispiel**: 
+  ```yaml
+  obfuscation_length: 10
   ```
 
 #### `copy_only_used_libraries`

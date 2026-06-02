@@ -4,6 +4,93 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 
 ---
 
+## [2.1.0] - 2026-06-02
+
+### ✨ Neue Features
+
+#### Konfigurierbare Copyright-Ordner
+- **Flexible Copyright-Zuordnung**: `copyright_folders` Parameter in config.yaml
+- **Nicht mehr auf lib/Askoheat beschränkt**: Jeder Ordner kann Copyright-Header erhalten
+- **Mehrere Ordner gleichzeitig**: z.B. `src`, `lib/Askoheat`, `include`, `lib/AnotherLib`
+- **Vollständige Kontrolle**: Definiere genau, welche Ordner geschützt werden sollen
+
+#### Verschleierungsstile
+- **4 verschiedene Obfuscation-Modi**: Wähle die passende Verschleierungsintensität
+  - `simple`: v0, v1, C0, C1 - schnell, lesbar (Standard)
+  - `random`: z8K3a, mP9xQ - hochgradig obfusciert, zufällige Buchstaben/Zahlen
+  - `hex`: x4F2A, x7B3C - Hex-basierte Namen mit Präfix
+  - `numbered`: var_0, const_0 - beschreibende Präfixe mit Nummerierung
+- **Konfigurierbare Länge**: `obfuscation_length` für random/hex-Stil (Standard: 8 Zeichen)
+- **Projektangepasste Verschleierung**: Wähle zwischen minimaler und maximaler Obfuscation
+
+#### Erweiterte src-Unterstützung
+- **Copyright-Header für src**: src-Ordner kann nun auch Copyright-Header erhalten
+- **Konsistenter Schutz**: Gleiche Copyright-Behandlung für alle eigenen Code-Ordner
+- **Flexibel konfigurierbar**: Aktiviere/Deaktiviere nach Bedarf
+
+### 🔧 Verbesserungen
+
+- **Bessere Pfad-Normalisierung**: Robustere Behandlung von Windows/Unix-Pfaden
+- **Verbesserte Konfiguration**: Default-Config enthält neue Parameter
+- **Optimierte Code-Struktur**: `generate_obfuscated_name()` unterstützt alle Stile
+
+### 📝 Neue Konfigurationsoptionen
+
+Neue Parameter in `config.yaml`:
+
+```yaml
+# Konfigurierbare Copyright-Ordner (NEU!)
+copyright_folders:
+  - "src"
+  - "lib/Askoheat"
+  - "include"
+
+# Verschleierungsstil (NEU!)
+obfuscation_style: "simple"  # simple, random, hex, numbered
+
+# Länge der obfuscierten Namen (NEU!)
+obfuscation_length: 8
+```
+
+### 📖 Dokumentation
+
+- README.md aktualisiert mit v2.1 Features
+- CONFIG_GUIDE.md erweitert um neue Parameter
+- Detaillierte Beschreibung der Verschleierungsstile
+- Beispiele für alle Obfuscation-Modi
+
+### 🔄 Migration von v2.0 zu v2.1
+
+**Gute Nachricht**: Vollständig rückwärtskompatibel!
+
+#### Wenn keine Änderungen gemacht werden:
+- Tool verhält sich exakt wie v2.0
+- Standard: `copyright_folders` enthält `["src", "lib/Askoheat", "include"]`
+- Standard: `obfuscation_style` ist `"simple"`
+
+#### Um neue Features zu nutzen:
+
+1. **Andere Ordner für Copyright-Header**:
+   ```yaml
+   copyright_folders:
+     - "src"              # Aktiviert Copyright für src
+     - "lib/MyLib"        # Deine eigene Library
+     - "custom_folder"    # Beliebiger anderer Ordner
+   ```
+
+2. **Höhere Verschleierung aktivieren**:
+   ```yaml
+   obfuscation_style: "random"    # Maximale Verschleierung
+   obfuscation_length: 10         # Längere Namen
+   ```
+
+3. **Beschreibende Namen verwenden**:
+   ```yaml
+   obfuscation_style: "numbered"  # var_0, const_0, etc.
+   ```
+
+---
+
 ## [2.0.0] - 2026-06-02
 
 ### ✨ Neue Features

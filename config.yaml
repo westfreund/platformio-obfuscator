@@ -5,8 +5,14 @@
 # Copyright Header
 # ----------------
 # Pfad zur Datei mit dem Copyright-Header-Template
-# Dieser Header wird allen Dateien in lib/Askoheat vorangestellt
 copyright_header_file: "copyright_header.txt"
+
+# Ordner, die einen Copyright-Header erhalten sollen
+# (Header wird allen Code-Dateien in diesen Ordnern vorangestellt)
+copyright_folders:
+  - "src"
+  - "lib/Askoheat"
+  - "include"
 
 # Obfuscation Settings
 # --------------------
@@ -27,6 +33,17 @@ obfuscate_folders:
   - "src"
   - "lib/Askoheat"
   - "include"
+
+# Verschleierungsstil für Identifikatoren
+# Mögliche Werte:
+#   "simple"   : v0, v1, v2, ... / C0, C1, C2, ... (Standard)
+#   "random"   : z8K3a, mP9xQ, ... (zufällige Buchstaben/Zahlen)
+#   "hex"      : x4F2A, x7B3C, ... (Hex mit Präfix)
+#   "numbered" : var_0, var_1, ... / const_0, const_1, ...
+obfuscation_style: "simple"
+
+# Länge der generierten Namen (nur bei "random" und "hex")
+obfuscation_length: 8
 
 # Library Handling
 # ----------------

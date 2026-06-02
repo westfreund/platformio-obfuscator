@@ -39,8 +39,11 @@ class Config:
     
     DEFAULT_CONFIG = {
         'copyright_header_file': 'copyright_header.txt',
+        'copyright_folders': ['src', 'lib/Askoheat', 'include'],
         'obfuscate_extensions': ['.c', '.cpp', '.cc', '.cxx', '.h', '.hpp', '.hxx', '.ino'],
         'obfuscate_folders': ['src', 'lib/Askoheat', 'include'],
+        'obfuscation_style': 'simple',
+        'obfuscation_length': 8,
         'copy_only_used_libraries': True,
         'preserve_libraries': [],
         'library_ignore_patterns': [
@@ -371,15 +374,35 @@ class CodeObfuscator:
         if original.startswith('_'):
             return original
         
-        # Generiere Namen basierend auf Config
-        var_prefix = self.config.get('variable_prefix', 'v')
-        const_prefix = self.config.get('constant_prefix', 'C')
+        # Generiere Namen basierend auf Verschleierungsstil
+        style = self.config.get('obfuscation_style', 'simple')
+        length = self.config.get('obfuscation_length', 8)
+        is_constant = original.isupper() and len(original) > 1
         
-        # Prüfen ob es Großbuchstaben enthält (oft Makros/Konstanten)
-        if original.isupper() and len(original) > 1:
-            new_name = f"{const_prefix}{self.identifier_counter}"
-        else:
-            new_name = f"{var_prefix}{self.identifier_counter}"
+        if style == 'random':
+            # Zufällige Kombination aus Buchstaben und Zahlen
+            import random
+            import string
+            chars = string.ascii_letters + string.digits
+            # Stelle sicher, dass es mit Buchstaben beginnt (gültige C-Identifikatoren)
+            new_name = random.choice(string.ascii_letters) + ''.join(random.choices(chars, k=length-1))
+        
+        elif style == 'hex':
+            # Hex-basierte Namen
+            hex_val = format(self.identifier_counter, 'X').zfill(length-1)
+            new_name = 'x' + hex_val
+        
+        elif style == 'numbered':
+            # Beschreibende Präfixe mit Nummern
+            prefix = 'const_' if is_constant else 'var_'
+            new_name = f"{prefix}{self.identifier_counter}"
+        
+        else:  # 'simple' (default)
+            # Einfache Präfixe
+            var_prefix = self.config.get('variable_prefix', 'v')
+            const_prefix = self.config.get('constant_prefix', 'C')
+            prefix = const_prefix if is_constant else var_prefix
+            new_name = f"{prefix}{self.identifier_counter}"
         
         self.identifier_counter += 1
         self.identifier_map[original] = new_name
@@ -441,12 +464,16 @@ class CodeObfuscator:
         """Prüft ob einer Datei ein Copyright-Header hinzugefügt werden soll"""
         try:
             rel_path = file_path.relative_to(self.target_path)
-            path_str = str(rel_path)
+            path_str = str(rel_path).replace('\\', '/')
             
-            # Nur lib/Askoheat Dateien
-            if path_str.startswith('lib/Askoheat') or path_str.startswith('lib\\Askoheat'):
-                if file_path.suffix in self.config.get('obfuscate_extensions', []):
-                    return True
+            # Prüfe alle konfigurierten Copyright-Ordner
+            copyright_folders = self.config.get('copyright_folders', [])
+            
+            for folder in copyright_folders:
+                folder_normalized = folder.replace('\\', '/')
+                if path_str.startswith(folder_normalized):
+                    if file_path.suffix in self.config.get('obfuscate_extensions', []):
+                        return True
         except ValueError:
             pass
         

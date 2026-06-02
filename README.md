@@ -24,14 +24,15 @@ Ein erweitertes Python-Tool zur automatischen Code-Obfuscation von PlatformIO-Pr
 
 Dieses Tool wurde entwickelt, um PlatformIO-Projekte für die Veröffentlichung vorzubereiten, indem es:
 
-1. **Copyright-Header hinzufügt**: Alle Dateien in `lib/Askoheat` erhalten einen konfigurierbaren Copyright-Header
+1. **Copyright-Header hinzufügt**: Konfigurierbare Copyright-Header für definierte Ordner (z.B. `src`, `lib/Askoheat`, `include`)
 2. **Selektiv obfusciert**: Nur definierte Ordner (`src`, `lib/Askoheat`, `include`) werden obfusciert
-3. **Libraries schützt**: Externe Libraries bleiben lesbar - nur eigener Code wird obfusciert
-4. **Intelligent kopiert**: Nur verwendete Libraries werden kopiert, Beispiele werden entfernt
-5. **Kommentare entfernt**: Alle `//` und `/* */` Kommentare werden aus obfuscierten Ordnern entfernt
-6. **Code obfusciert**: Variablen, Funktionen und andere Identifikatoren werden durch generische Namen ersetzt
-7. **Projekt kopiert**: Das Originalprojekt bleibt unverändert, es wird eine neue Kopie erstellt
-8. **Kompilierung prüft**: Das obfuscierte Projekt wird automatisch kompiliert, um die Funktionalität zu verifizieren
+3. **Flexible Verschleierung**: 4 verschiedene Verschleierungsstile - von einfach bis hochgradig obfusciert
+4. **Libraries schützt**: Externe Libraries bleiben lesbar - nur eigener Code wird obfusciert
+5. **Intelligent kopiert**: Nur verwendete Libraries werden kopiert, Beispiele werden entfernt
+6. **Kommentare entfernt**: Alle `//` und `/* */` Kommentare werden aus obfuscierten Ordnern entfernt
+7. **Code obfusciert**: Variablen, Funktionen und andere Identifikatoren werden durch generische Namen ersetzt
+8. **Projekt kopiert**: Das Originalprojekt bleibt unverändert, es wird eine neue Kopie erstellt
+9. **Kompilierung prüft**: Das obfuscierte Projekt wird automatisch kompiliert, um die Funktionalität zu verifizieren
 
 ---
 
@@ -40,7 +41,8 @@ Dieses Tool wurde entwickelt, um PlatformIO-Projekte für die Veröffentlichung 
 ### Hauptfeatures
 
 #### ✨ Copyright-Header-System
-- Automatisches Hinzufügen von Copyright-Headern zu allen `lib/Askoheat` Dateien
+- Automatisches Hinzufügen von Copyright-Headern zu konfigurierbaren Ordnern
+- Standard: `src`, `lib/Askoheat`, `include` (vollständig anpassbar)
 - Vollständig anpassbar über `copyright_header.txt`
 - Unterstützt alle gängigen Lizenz-Stile (MIT, GPL, proprietär, etc.)
 
@@ -53,8 +55,14 @@ Dieses Tool wurde entwickelt, um PlatformIO-Projekte für die Veröffentlichung 
 #### ✨ YAML-Konfigurationssystem
 - Umfassende `config.yaml` für alle Einstellungen
 - Definiere selbst, welche Ordner obfusciert werden sollen
+- Konfigurierbare Copyright-Ordner (nicht mehr hardcoded auf `lib/Askoheat`)
 - Konfigurierbare Library-Behandlung
-- Anpassbare Identifier-Prefixe (`v0`, `C0`, etc.)
+- **4 Verschleierungsstile**: `simple`, `random`, `hex`, `numbered`
+  - `simple`: v0, v1, C0, C1 (schnell lesbar)
+  - `random`: z8K3a, mP9xQ (hochgradig obfusciert)
+  - `hex`: x4F2A, x7B3C (Hex-basiert)
+  - `numbered`: var_0, var_1, const_0 (beschreibend)
+- Anpassbare Identifier-Länge (bei random/hex)
 
 ### Detaillierte Änderungen
 
@@ -64,8 +72,14 @@ Siehe [CHANGELOG.md](CHANGELOG.md) für vollständige Liste.
 
 ## ✨ Features
 
+### v2.1 Features (NEU!)
+- ✅ **Konfigurierbare Copyright-Ordner**: Copyright-Header nicht mehr auf `lib/Askoheat` beschränkt
+- ✅ **Mehrere Verschleierungsstile**: 4 verschiedene Obfuscation-Modi (simple, random, hex, numbered)
+- ✅ **Erweiterte src-Unterstützung**: src-Ordner kann nun auch Copyright-Header erhalten
+- ✅ **Anpassbare Obfuscation-Tiefe**: Definiere Verschleierungsintensität nach Bedarf
+
 ### v2.0 Features
-- ✅ **Copyright-Header-System**: Automatisches Hinzufügen von Copyright-Headern (nur `lib/Askoheat`)
+- ✅ **Copyright-Header-System**: Automatisches Hinzufügen von Copyright-Headern
 - ✅ **Selektive Obfuscation**: Nur definierte Ordner werden obfusciert, Libraries bleiben lesbar
 - ✅ **Dependency-Analyse**: Automatische Erkennung verwendeter Libraries
 - ✅ **Library-Filtering**: Entfernt Beispiele, Tests, Dokumentation aus Libraries
