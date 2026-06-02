@@ -101,6 +101,9 @@ class CodeObfuscator:
         'class', 'namespace', 'private', 'protected', 'public', 'template',
         'this', 'virtual', 'override', 'final', 'explicit', 'operator',
         'new', 'delete', 'try', 'catch', 'throw', 'using', 'typename',
+        # Preprocessor-Direktiven (CRITICAL: müssen immer erhalten bleiben!)
+        'include', 'define', 'undef', 'ifdef', 'ifndef', 'if', 'elif', 'else', 
+        'endif', 'pragma', 'error', 'warning', 'line',
         # Arduino/ESP32 häufig genutzte Funktionen
         'pinMode', 'digitalWrite', 'digitalRead', 'analogRead', 'analogWrite',
         'delay', 'millis', 'micros', 'Serial', 'String', 'setup', 'loop',

@@ -4,6 +4,19 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 
 ---
 
+## [2.1.2] - 2026-06-02
+
+### 🐛 Bugfixes
+
+#### Preprocessor-Direktiven werden nicht mehr obfusciert
+- **KRITISCHER BUGFIX**: Preprocessor-Direktiven wurden obfusciert und verhinderten Kompilierung
+- **Problem behoben**: `#include`, `#define`, `#ifdef`, `#ifndef`, `#endif`, etc. werden nun geschützt
+- **Lösung**: Alle Preprocessor-Direktiven zu RESERVED_WORDS hinzugefügt
+- **Betroffene Direktiven**: `include`, `define`, `undef`, `ifdef`, `ifndef`, `if`, `elif`, `else`, `endif`, `pragma`, `error`, `warning`, `line`
+- **Ergebnis**: Obfuscierter Code kompiliert nun korrekt
+
+---
+
 ## [2.1.1] - 2026-06-02
 
 ### 🐛 Bugfixes
