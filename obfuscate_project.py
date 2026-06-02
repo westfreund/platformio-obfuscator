@@ -484,13 +484,12 @@ class CodeObfuscator:
         try:
             self.log(f"Verarbeite: {file_path.relative_to(self.target_path)}")
             
-            # Prüfe ob Copyright-Header hinzugefügt werden soll
-            if self.should_add_copyright(file_path):
-                self.add_copyright_header(file_path)
-                self.log(f"  Copyright-Header hinzugefügt")
-            
             # Prüfe ob Datei obfusciert werden soll
             if not self.should_obfuscate_file(file_path):
+                # Wenn nicht obfusciert wird, prüfe trotzdem ob Copyright-Header hinzugefügt werden soll
+                if self.should_add_copyright(file_path):
+                    self.add_copyright_header(file_path)
+                    self.log(f"  Copyright-Header hinzugefügt (preserve-Modus)")
                 self.log(f"  Überspringe Obfuscation (preserve)")
                 return True
             
@@ -505,6 +504,11 @@ class CodeObfuscator:
             
             # Schritt 3: Identifikatoren obfuscieren
             content = self.obfuscate_identifiers(content, identifiers)
+            
+            # Schritt 4: Copyright-Header hinzufügen (NACH Kommentar-Entfernung und Obfuscation!)
+            if self.should_add_copyright(file_path):
+                content = self.copyright_header + "\n" + content
+                self.log(f"  Copyright-Header hinzugefügt")
             
             # Datei überschreiben
             with open(file_path, 'w', encoding='utf-8') as f:

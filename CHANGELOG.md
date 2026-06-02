@@ -4,6 +4,22 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 
 ---
 
+## [2.1.1] - 2026-06-02
+
+### 🐛 Bugfixes
+
+#### Copyright-Header wird nicht mehr entfernt
+- **Problem behoben**: Copyright-Header wurde nach dem Einfügen wieder durch `remove_comments()` entfernt
+- **Lösung**: Copyright-Header wird jetzt NACH der Kommentar-Entfernung und Obfuscation eingefügt
+- **Reihenfolge optimiert**: 
+  1. Kommentare entfernen
+  2. Code obfuscieren
+  3. Copyright-Header hinzufügen
+  4. Datei speichern
+- **Ergebnis**: Copyright-Header bleibt nun in obfuscierten Dateien erhalten
+
+---
+
 ## [2.1.0] - 2026-06-02
 
 ### ✨ Neue Features
